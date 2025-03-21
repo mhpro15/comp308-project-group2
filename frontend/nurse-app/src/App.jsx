@@ -4,6 +4,7 @@ import "./App.css";
 // Import components
 import AppLayout from "./components/AppLayout";
 import VitalSigns from "./pages/VitalSigns";
+import MotivationalTipsPage from "./pages/MotivationalTipsPage";
 
 const Dashboard = () => (
   <div>
@@ -88,22 +89,6 @@ const PatientsPage = () => (
   </div>
 );
 
-const MotivationalTipsPage = () => (
-  <div>
-    <div className="page-header">
-      <h1 className="page-title">Motivational Tips</h1>
-    </div>
-    <div className="card">
-      <div className="card-header">
-        <h2 className="card-title">Daily Motivation</h2>
-      </div>
-      <div className="card-body">
-        <p>Create and share motivational content with patients.</p>
-      </div>
-    </div>
-  </div>
-);
-
 const AnalyzePage = () => (
   <div>
     <div className="page-header">
@@ -171,7 +156,7 @@ function App() {
           path="/motivational-tips"
           element={
             <AppLayout>
-              <MotivationalTipsPage />
+              <MotivationalTipsPage currentUser={{ role: "nurse" }} />
             </AppLayout>
           }
         />
