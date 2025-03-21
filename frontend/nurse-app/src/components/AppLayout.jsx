@@ -25,7 +25,6 @@ const AppLayout = ({ children }) => {
 
   return (
     <div className="md:flex h-screen bg-gray-100 w-screen">
-      {/* Sidebar */}
       <aside
         className={`fixed flex-1/3 md:relative h-full max-w-[400px] bg-white shadow-lg transform transition-transform duration-300 ease-in-out ${
           isSidebarOpen ? "translate-x-0" : "-translate-x-full"
@@ -162,7 +161,6 @@ const AppLayout = ({ children }) => {
         </nav>
       </aside>
 
-      {/* Main Content */}
       <div className="w-full text-gray-600">
         <header className="bg-white w-full shadow-md p-4 flex items-center justify-between md:hidden">
           <Menu

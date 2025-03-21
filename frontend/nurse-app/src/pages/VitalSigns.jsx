@@ -34,7 +34,6 @@ const VitalSigns = (currentUser) => {
         <VitalSignsForm />
       ) : (
         <div className="vital-signs-history">
-          {/* Add your VitalSignsHistory component here */}
           <h2 className="text-xl font-semibold">Vital Signs History</h2>
           <VitalSignsHistory currentUser={currentUser} />
         </div>
