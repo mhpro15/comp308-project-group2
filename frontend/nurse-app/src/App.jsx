@@ -1,35 +1,191 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import "./App.css";
 
-function App() {
-  const [count, setCount] = useState(0)
+// Import components
+import AppLayout from "./components/AppLayout";
+import VitalSigns from "./pages/VitalSigns";
 
-  return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+const Dashboard = () => (
+  <div>
+    <div className="page-header">
+      <h1 className="page-title">Dashboard</h1>
+    </div>
+    <div className="card">
+      <div className="card-header">
+        <h2 className="card-title">Welcome Back</h2>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
+      <div className="card-body">
         <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
+          This is your nursing dashboard. View your daily tasks and patient
+          information.
         </p>
       </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    </div>
+  </div>
+);
+
+const VitalsPage = () => (
+  <div>
+    <div className="page-header">
+      <h1 className="page-title">Patient Vitals</h1>
+    </div>
+    <div className="card">
+      <div className="card-header">
+        <h2 className="card-title">Vital Signs Monitor</h2>
+      </div>
+      <div className="card-body">
+        <p>View and track patient vital signs here.</p>
+      </div>
+    </div>
+  </div>
+);
+
+const EmergencyPage = () => (
+  <div>
+    <div className="page-header">
+      <h1 className="page-title">Emergency Alerts</h1>
+    </div>
+    <div className="card">
+      <div className="card-header">
+        <h2 className="card-title">Emergency Response System</h2>
+      </div>
+      <div className="card-body">
+        <p>Track and respond to emergency alerts from patients.</p>
+      </div>
+    </div>
+  </div>
+);
+
+const SymptomsPage = () => (
+  <div>
+    <div className="page-header">
+      <h1 className="page-title">Symptom Reports</h1>
+    </div>
+    <div className="card">
+      <div className="card-header">
+        <h2 className="card-title">Patient Reported Symptoms</h2>
+      </div>
+      <div className="card-body">
+        <p>Review symptoms reported by patients.</p>
+      </div>
+    </div>
+  </div>
+);
+
+const PatientsPage = () => (
+  <div>
+    <div className="page-header">
+      <h1 className="page-title">Patient Management</h1>
+    </div>
+    <div className="card">
+      <div className="card-header">
+        <h2 className="card-title">Patient Records</h2>
+      </div>
+      <div className="card-body">
+        <p>Access and manage patient records here.</p>
+      </div>
+    </div>
+  </div>
+);
+
+const MotivationalTipsPage = () => (
+  <div>
+    <div className="page-header">
+      <h1 className="page-title">Motivational Tips</h1>
+    </div>
+    <div className="card">
+      <div className="card-header">
+        <h2 className="card-title">Daily Motivation</h2>
+      </div>
+      <div className="card-body">
+        <p>Create and share motivational content with patients.</p>
+      </div>
+    </div>
+  </div>
+);
+
+const AnalyzePage = () => (
+  <div>
+    <div className="page-header">
+      <h1 className="page-title">Data Analysis</h1>
+    </div>
+    <div className="card">
+      <div className="card-header">
+        <h2 className="card-title">Patient Data Analysis</h2>
+      </div>
+      <div className="card-body">
+        <p>Analyze patient health data and trends.</p>
+      </div>
+    </div>
+  </div>
+);
+
+function App() {
+  return (
+    <Router>
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <AppLayout>
+              <Dashboard />
+            </AppLayout>
+          }
+        />
+
+        {/* Protected Routes */}
+
+        <Route
+          path="/vitals"
+          element={
+            <AppLayout>
+              <VitalSigns />
+            </AppLayout>
+          }
+        />
+        <Route
+          path="/emergency"
+          element={
+            <AppLayout>
+              <EmergencyPage />
+            </AppLayout>
+          }
+        />
+        <Route
+          path="/symptoms"
+          element={
+            <AppLayout>
+              <SymptomsPage />
+            </AppLayout>
+          }
+        />
+        <Route
+          path="/patients"
+          element={
+            <AppLayout>
+              <PatientsPage />
+            </AppLayout>
+          }
+        />
+        <Route
+          path="/motivational-tips"
+          element={
+            <AppLayout>
+              <MotivationalTipsPage />
+            </AppLayout>
+          }
+        />
+        <Route
+          path="/analyze"
+          element={
+            <AppLayout>
+              <AnalyzePage />
+            </AppLayout>
+          }
+        />
+      </Routes>
+    </Router>
+  );
 }
 
-export default App
+export default App;
