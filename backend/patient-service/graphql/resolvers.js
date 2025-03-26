@@ -1,6 +1,21 @@
+import { GraphQLDataSourceRequestKind } from "@apollo/gateway/dist/datasources/types.js";
 import Patient from "../models/Patient.js";
+import { GraphQLScalarType, Kind } from "graphql";
 
+// DateTime scalar implementation
+const DateTime = new GraphQLScalarType({
+  name: 'DateTime',
+  description: 'DateTime scalar type',
+  serialize: (value) => value.toISOString(),
+  parseValue: (value) => new Date(value),
+  parseLiteral: (ast) => new Date(ast.value)
+});
 const resolvers = {
+  Patient: {
+    __resolveReference:(patient, {datasources})=>{
+      return datasources.patientAPI.getPatientById(patient.id);
+    }
+  },  DateTime,
   Query: {
     //all patients
     patients: async () => {

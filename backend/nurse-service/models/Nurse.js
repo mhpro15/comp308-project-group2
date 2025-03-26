@@ -15,7 +15,6 @@ const nurseSchema = new mongoose.Schema(
     
     // Professional Information
     licenseNumber: { type: String, required: true, unique: true },
-    specialization: { type: String },
 
     
     // Work Schedule
@@ -29,9 +28,9 @@ const nurseSchema = new mongoose.Schema(
     
     // Assigned Patients (reference to Patient model)
     assignedPatients: [{
-      patientId: { type: mongoose.Schema.Types.ObjectId, ref: "Patient", required: true },
+      patientId: { type: mongoose.Schema.Types.ObjectId, ref: "Patient" },
       assignmentDate: { type: Date, default: Date.now },
-      primaryCare: { type: Boolean, default: false }
+   
     }],
     
     

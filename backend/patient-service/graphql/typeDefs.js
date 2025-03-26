@@ -1,62 +1,35 @@
 const typeDefs = `#graphql
-  type Patient {
+  
+  scalar DateTime
+  enum Gender { 
+  Male
+  Female
+  Other
+  }
+  type Patient @key(fields: "id") {
     id: ID!
     fullName: String!
-    dateOfBirth: String!
-    gender: String!
+    dateOfBirth: DateTime!
+    gender: Gender!
     contactInfo: ContactInfo!
     emergencyContact: EmergencyContact!
     medicalHistory: MedicalHistory!
     physicalData: PhysicalData!
     visits: [Visit!]!
-    createdAt: String!
-    updatedAt: String!
-  }
-  ## Nurse Type
-  type Nurse {
-  id: ID!
-  fullName: String!
-  dateOfBirth: String!
-  gender: String!
-  contactInfo: NurseContactInfo!
-  licenseNumber: String!
-  specialization: String
-  workSchedule: WorkSchedule
-  assignedPatients: [PatientAssignment!]
-  isActive: Boolean!
-}
-  ## Motivational Tip Type
-  type MotivationalTip {
-  id: ID!
-  title: String!
-  content: String!
-  category: String!
-  mediaUrl: String
-  nurse: Nurse!   # Populated from nurseId
-  patient: Patient # Populated from patientId (if not broadcast)
-  isBroadcast: Boolean!
-  scheduleDate: String
-  isRead: Boolean!
-  readAt: String
-  createdAt: String!
-}
-  type ContactInfo {
-    phone: String!  # Required
-    email: String                 
-    address: String
+    createdAt: DateTime!
+    updatedAt: DateTime!
   }
 
+type ContactInfo {
+  phone: String!
+  email: String!  
+  address: String
+} 
   type EmergencyContact {
     name: String!
     phone: String!
     relation: String!
   }
-
-  type ContactDetails {
-  contactInfo: ContactInfo
-  emergencyContact: EmergencyContact
-}
-
   type MedicalHistory {
     allergies: [String]
     chronicIllnesses: [String]
@@ -80,29 +53,19 @@ const typeDefs = `#graphql
   }
 
   type Visit {
-    date: String!
+    date: DateTime!
     doctor : String!
     reason: String!
     diagnosis: String
     prescribedTreatments: [String]
-    followUpDate: String
+    followUpDate: DateTime
   }
-    ##Nurse specific sub types
-    ## Nurse Contact Info
-  type NurseContactInfo {
-  phone: String!
-  email: String!  # Nurses require email
-  address: String
-}
-## Work Schedule
-type WorkSchedule {
-  days: [String!]  # e.g., ["Mon", "Wed"]
-  shift: String    # "Morning"/"Afternoon"/"Night"
-}
+
+
 ## Patient Assignment linking Nurse and Patient
 type PatientAssignment {
   patient: Patient!
-  assignmentDate: String!
+  assignmentDate: DateTime!
   primaryCare: Boolean!
 }
 
@@ -148,12 +111,12 @@ type EmergencyAlert {
   }
 
   input VisitInput {
-  date: String!
+  date: DateTime!
   doctor: String!
   reason: String!
   diagnosis: String
   prescribedTreatments: [String]
-  followUpDate: String
+  followUpDate: DateTime
 }
 
   type Query {
@@ -165,8 +128,8 @@ type EmergencyAlert {
   type Mutation {
     addPatient(
       fullName: String!
-      dateOfBirth: String!
-      gender: String!
+      dateOfBirth: DateTime!
+      gender: Gender! 
       contactInfo: ContactInfoInput!
       emergencyContact: EmergencyContactInput!
       medicalHistory: MedicalHistoryInput!
@@ -177,8 +140,8 @@ type EmergencyAlert {
     updatePatient(
       id: ID!
       fullName: String
-      dateOfBirth: String
-      gender: String
+      dateOfBirth: DateTime
+      gender: Gender
       contactInfo: ContactInfoInput
       emergencyContact: EmergencyContactInput
       medicalHistory: MedicalHistoryInput
