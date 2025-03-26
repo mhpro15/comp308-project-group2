@@ -30,7 +30,7 @@ const resolvers = {
         throw new Error("Error finding patient: " + error.message);
       }
     },
-    getSymptoms: async (_, { id }) => {
+    symptoms: async (_, { id }) => {
       try {
         const patient = await Patient.findById(id);
         if (!patient) {
@@ -40,6 +40,36 @@ const resolvers = {
         return patient.physicalData ? patient.physicalData.symptoms : [];
       } catch (error) {
         throw new Error("Error fetching symptoms: " + error.message);
+      }
+    },
+
+    contactDetails: async (_, { id }) => {
+      try {
+        const patient = await Patient.findById(id);
+        if (!patient) {
+          throw new Error("Patient not found");
+        }
+        return {
+          contactInfo: patient.contactInfo,
+          emergencyContact: patient.emergencyContact,
+        };
+      } catch (error) {
+        throw new Error("Error fetching contact details: " + error.message);
+      }
+    },
+    healthDetails: async (_, { id }) => {
+      try {
+        const patient = await Patient.findById(id);
+        if (!patient) {
+          throw new Error("Patient not found");
+        }
+        return {
+          medicalHistory: patient.medicalHistory,
+          physicalData: patient.physicalData,
+          visits: patient.visits,
+        };
+      } catch (error) {
+        throw new Error("Error fetching health details: " + error.message);
       }
     },
   },
@@ -84,13 +114,37 @@ const resolvers = {
         }
 
         if (contactInfo) {
-          patient.contactInfo = { ...patient.contactInfo, ...contactInfo };
+          patient.contactInfo = {
+            ...patient.contactInfo,
+            ...contactInfo,
+          };
         }
 
         await patient.save();
         return patient;
       } catch (error) {
         throw new Error("Server - Error updating patient: " + error.message);
+      }
+    },
+
+    addVisit: async (_, { id, visit }) => {
+      try {
+        const patient = await Patient.findById(id);
+        if (!patient) {
+          throw new Error("Patient not found");
+        }
+
+        patient.visits.push(visit);
+        await patient.save();
+
+        return {
+          id: patient._id.toString(),
+          createdAt: new Date(patient.createdAt).toISOString(),
+          updatedAt: new Date(patient.updatedAt).toISOString(),
+          ...patient.toObject(),
+        };
+      } catch (error) {
+        throw new Error("Error adding visit: " + error.message);
       }
     },
 
@@ -113,6 +167,25 @@ const resolvers = {
         return patient;
       } catch (error) {
         throw new Error("Error adding symptoms: " + error.message);
+      }
+    },
+
+    removeSymptom: async (_, { id, symptom }) => {
+      try {
+        const patient = await Patient.findById(id);
+        if (!patient) {
+          throw new Error("Patient not found");
+        }
+
+        // Remove symptom if it exists in the array
+        patient.physicalData.symptoms = patient.physicalData.symptoms.filter(
+          (s) => s !== symptom
+        );
+
+        await patient.save();
+        return patient;
+      } catch (error) {
+        throw new Error("Error removing symptom: " + error.message);
       }
     },
   },

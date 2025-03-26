@@ -25,12 +25,16 @@ const typeDefs = `#graphql
     relation: String!
   }
 
+  type ContactDetails {
+  contactInfo: ContactInfo
+  emergencyContact: EmergencyContact
+}
+
   type MedicalHistory {
     allergies: [String]
     chronicIllnesses: [String]
     pastSurgeries: [String]
     currentMedications: [String]
-    familyMedicalHistory: [String]
   }
 
   type PhysicalData {
@@ -42,8 +46,15 @@ const typeDefs = `#graphql
     symptoms: [String]
   }
 
+  type HealthDetails {
+  medicalHistory: MedicalHistory
+  physicalData: PhysicalData
+  visits: [Visit]
+  }
+
   type Visit {
     date: String!
+    doctor : String!
     reason: String!
     diagnosis: String
     prescribedTreatments: [String]
@@ -79,16 +90,20 @@ const typeDefs = `#graphql
   }
 
   input VisitInput {
-    date: String!
-    doctor: String!
-    reason: String!
-    diagnosis: String
-  }
+  date: String!
+  doctor: String!
+  reason: String!
+  diagnosis: String
+  prescribedTreatments: [String]
+  followUpDate: String
+}
 
   type Query {
     patients: [Patient!]!
     patient(id: ID!): Patient
-    getSymptoms(id: ID!): [String]
+    contactDetails(id: ID!): ContactDetails
+    symptoms(id: ID!): [String]
+    healthDetails(id: ID!): HealthDetails
   }
 
   type Mutation {
@@ -117,7 +132,11 @@ const typeDefs = `#graphql
 
     deletePatient(id: ID!): String!
 
+    addVisit(id: ID!, visit: VisitInput!): Patient!
+
     addSymptoms(id: ID!, symptoms: [String]!): Patient!
+
+    removeSymptom(id: ID!, symptom: String!): Patient!
   }
 `;
 

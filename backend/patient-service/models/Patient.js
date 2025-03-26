@@ -18,11 +18,12 @@ const patientSchema = new mongoose.Schema(
     },
 
     // Medical History
-    allergies: [{ type: String }],
-    chronicIllnesses: [{ type: String }],
-    pastSurgeries: [{ type: String }],
-    currentMedications: [{ type: String }],
-    familyMedicalHistory: [{ type: String }],
+    medicalHistory: {
+      allergies: [{ type: String }],
+      chronicIllnesses: [{ type: String }],
+      pastSurgeries: [{ type: String }],
+      currentMedications: [{ type: String }],
+    },
 
     // Physical Data & Vitals
     physicalData: {
@@ -41,6 +42,7 @@ const patientSchema = new mongoose.Schema(
     visits: [
       {
         date: { type: Date, default: Date.now },
+        doctor: { type: String, required: true },
         reason: { type: String, required: true },
         diagnosis: { type: String },
         prescribedTreatments: [{ type: String }],

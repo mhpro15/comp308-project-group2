@@ -76,6 +76,8 @@ mutation AddPatient
   ]
 }
 
+
+
 //inputs in type defs overview.
 reusable structures for passing data into mutations. 
     -beneficial in components , could have a component "contact info", 
@@ -99,15 +101,29 @@ type Mutation {
 }
 
 
+REVISION:
+    25th march 2025
+ - Fixed Medical history, was not structured in mongoose,
+ - "getSymptoms" was renamed to "symptoms"
+ - addVisit functional
+
+
 
 TESTED
   mutations
     - add patient
     - deletePatient
     - updatePatient
-    - getSymptoms
+    - addSymptoms
+    - addVisit
+    - addSymptoms
+    - remove symptoms
+    
   queries
     - getPatientByID
+    - symptoms
+    - contactDetails
+    - healthDetails
 
 
 KNOWN ISSUES:
