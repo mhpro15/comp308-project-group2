@@ -12,10 +12,37 @@ const typeDefs = `#graphql
     createdAt: String!
     updatedAt: String!
   }
-
+  ## Nurse Type
+  type Nurse {
+  id: ID!
+  fullName: String!
+  dateOfBirth: String!
+  gender: String!
+  contactInfo: NurseContactInfo!
+  licenseNumber: String!
+  specialization: String
+  workSchedule: WorkSchedule
+  assignedPatients: [PatientAssignment!]
+  isActive: Boolean!
+}
+  ## Motivational Tip Type
+  type MotivationalTip {
+  id: ID!
+  title: String!
+  content: String!
+  category: String!
+  mediaUrl: String
+  nurse: Nurse!   # Populated from nurseId
+  patient: Patient # Populated from patientId (if not broadcast)
+  isBroadcast: Boolean!
+  scheduleDate: String
+  isRead: Boolean!
+  readAt: String
+  createdAt: String!
+}
   type ContactInfo {
-    phone: String!
-    email: String
+    phone: String!  # Required
+    email: String                 
     address: String
   }
 
@@ -60,7 +87,38 @@ const typeDefs = `#graphql
     prescribedTreatments: [String]
     followUpDate: String
   }
+    ##Nurse specific sub types
+    ## Nurse Contact Info
+  type NurseContactInfo {
+  phone: String!
+  email: String!  # Nurses require email
+  address: String
+}
+## Work Schedule
+type WorkSchedule {
+  days: [String!]  # e.g., ["Mon", "Wed"]
+  shift: String    # "Morning"/"Afternoon"/"Night"
+}
+## Patient Assignment linking Nurse and Patient
+type PatientAssignment {
+  patient: Patient!
+  assignmentDate: String!
+  primaryCare: Boolean!
+}
 
+# Response Types--later
+type ConditionAnalysis {
+  possibleConditions: [String!]!
+  advice: String!
+}
+
+type EmergencyAlert {
+  id: ID!
+  patient: Patient!
+  message: String!
+  status: String!
+  createdAt: String!
+}
   input ContactInfoInput {
     phone: String!
     email: String
@@ -101,9 +159,7 @@ const typeDefs = `#graphql
   type Query {
     patients: [Patient!]!
     patient(id: ID!): Patient
-    contactDetails(id: ID!): ContactDetails
-    symptoms(id: ID!): [String]
-    healthDetails(id: ID!): HealthDetails
+    getSymptoms(id: ID!): [String]
   }
 
   type Mutation {
@@ -117,7 +173,7 @@ const typeDefs = `#graphql
       physicalData: PhysicalDataInput!
       visits: [VisitInput!]
     ): Patient!
-
+ 
     updatePatient(
       id: ID!
       fullName: String
@@ -132,11 +188,7 @@ const typeDefs = `#graphql
 
     deletePatient(id: ID!): String!
 
-    addVisit(id: ID!, visit: VisitInput!): Patient!
-
     addSymptoms(id: ID!, symptoms: [String]!): Patient!
-
-    removeSymptom(id: ID!, symptom: String!): Patient!
   }
 `;
 
