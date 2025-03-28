@@ -4,12 +4,14 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --port=3002 --strictPort",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview --port=3002 --strictPort",
+    "deploy": "vite build && vite preview --port=3002 --strictPort"
   },
   "dependencies": {
+    "@apollo/client": "^3.13.5",
     "@originjs/vite-plugin-federation": "^1.4.0",
     "@tailwindcss/vite": "^4.0.14",
     "date-fns": "^4.1.0",
