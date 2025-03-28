@@ -2,41 +2,9 @@ import { useEffect, useState } from "react";
 import { Activity, FileDown } from "lucide-react";
 import { VitalSignsDisplay } from "./VitalSignsDisplay";
 import { format } from "date-fns";
-import { gql, useQuery } from "@apollo/client";
+import { useQuery } from "@apollo/client";
+import { GET_PATIENTS, GET_VITAL_SIGNS } from "../api/api";
 
-const GET_PATIENTS = gql`
-  query GetPatients {
-    getAllUsers {
-      email
-      id
-      name
-      role
-    }
-  }
-`;
-
-const GET_VITAL_SIGNS = gql`
-  query GetVitalSigns($getVitalSignsId: ID!) {
-    getVitalSigns(id: $getVitalSignsId) {
-      id
-      NurseID {
-        id
-        name
-      }
-      Temperature
-      BPsystolic
-      BPdiastolic
-      RespiratoryRate
-      weight
-      notes
-      timeStamp
-      PatientID {
-        name
-        id
-      }
-    }
-  }
-`;
 const VitalSignsHistory = (currentUser) => {
   const [vitalSigns, setVitalSigns] = useState([]);
   const [selectedPatient, setSelectedPatient] = useState("");

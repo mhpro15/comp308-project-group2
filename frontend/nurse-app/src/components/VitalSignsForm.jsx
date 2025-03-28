@@ -2,46 +2,12 @@ import { useEffect, useState } from "react";
 import { Thermometer, Heart, Droplet, Activity, Weight } from "lucide-react";
 import {
   useQuery,
-  gql,
   ApolloClient,
   InMemoryCache,
   ApolloProvider,
   useMutation,
 } from "@apollo/client";
-
-const GET_PATIENTS = gql`
-  query GetPatients {
-    getAllUsers {
-      email
-      id
-      name
-      role
-    }
-  }
-`;
-
-const RECORD_VITAL_SIGNS = gql`
-  mutation RecordVitalSigns($input: VitalSignsInput!) {
-    recordVitalSigns(input: $input) {
-      id
-      Temperature
-      BPsystolic
-      BPdiastolic
-      RespiratoryRate
-      weight
-      notes
-      timeStamp
-      PatientID {
-        id
-        email
-      }
-      NurseID {
-        id
-        email
-      }
-    }
-  }
-`;
+import { GET_PATIENTS, RECORD_VITAL_SIGNS } from "../api/api";
 
 const VitalSignsForm = () => {
   const [bodyTemperature, setBodyTemperature] = useState("");
