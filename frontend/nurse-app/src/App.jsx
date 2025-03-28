@@ -181,4 +181,10 @@ function App({ user }) {
   );
 }
 
-export default App;
+export default function AppWithProvider(props) {
+  return (
+    <ApolloProvider client={client}>
+      <App {...props} />
+    </ApolloProvider>
+  );
+}
