@@ -3,7 +3,7 @@ import react from "@vitejs/plugin-react";
 
 import federation from "@originjs/vite-plugin-federation";
 import tailwindcss from "@tailwindcss/vite";
-// https://vite.dev/config/
+
 export default defineConfig({
   plugins: [
     react(),
@@ -12,9 +12,9 @@ export default defineConfig({
       name: "nurseApp",
       filename: "remoteEntry.js", // remote exposed file
       exposes: {
-        "./NurseAppComponent": "./src/App",
+        "./NurseAppComponent": "./src/NurseAppComponent",
       },
-      shared: ["react", "react-dom", "@apollo/client"],
+      shared: ["react", "react-dom", "@apollo/client", "lucide-react"],
     }),
   ],
   build: {

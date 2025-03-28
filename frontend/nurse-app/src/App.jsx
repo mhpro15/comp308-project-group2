@@ -111,9 +111,9 @@ const AnalyzePage = () => (
   </div>
 );
 
-function App({ user }) {
+function App({ user, apolloClient }) {
   return (
-    <ApolloProvider client={client}>
+    <ApolloProvider client={apolloClient}>
       <Router>
         <Routes>
           <Route
@@ -181,10 +181,4 @@ function App({ user }) {
   );
 }
 
-export default function AppWithProvider(props) {
-  return (
-    <ApolloProvider client={client}>
-      <App {...props} />
-    </ApolloProvider>
-  );
-}
+export default App;
