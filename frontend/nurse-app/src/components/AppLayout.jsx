@@ -1,16 +1,17 @@
 import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
 import {
-  Home,
-  HeartPulse,
-  Ambulance,
-  PenBox,
-  User,
-  Lightbulb,
-  BarChart,
-  Menu,
-  X,
-} from "lucide-react";
+  FaHome,
+  FaHeartbeat,
+  FaAmbulance,
+  FaNotesMedical,
+  FaUserInjured,
+  FaLightbulb,
+  FaChartBar,
+  FaBars,
+  FaTimes,
+} from "react-icons/fa";
+import { Menu } from "lucide-react";
 
 const AppLayout = ({ children }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -25,6 +26,7 @@ const AppLayout = ({ children }) => {
 
   return (
     <div className="md:flex h-screen bg-gray-100 w-screen">
+      {/* Sidebar */}
       <aside
         className={`fixed flex-1/3 md:relative h-full max-w-[400px] bg-white shadow-lg transform transition-transform duration-300 ease-in-out ${
           isSidebarOpen ? "translate-x-0" : "-translate-x-full"
@@ -33,11 +35,11 @@ const AppLayout = ({ children }) => {
         <div className="flex-2/3 flex items-center justify-between p-4 border-b border-gray-200">
           <div className="flex items-center">
             <div className=" rounded-lg">
-              <HeartPulse size={24} className="text-blue-500" />
+              <FaHeartbeat size={24} className="text-blue-500" />
             </div>
             <p className="ml-3 text-xl font-bold text-gray-800">Nurse Portal</p>
           </div>
-          <X
+          <FaTimes
             size={25}
             onClick={closeSidebar}
             className="text-gray-600 font-light border-1 rounded-full md:hidden"
@@ -57,7 +59,7 @@ const AppLayout = ({ children }) => {
                 }
                 onClick={closeSidebar}
               >
-                <Home className="mr-4 text-lg" />
+                <FaHome className="mr-4 text-lg" />
                 Dashboard
               </NavLink>
             </li>
@@ -73,7 +75,7 @@ const AppLayout = ({ children }) => {
                 }
                 onClick={closeSidebar}
               >
-                <User className="mr-4 text-lg" />
+                <FaUserInjured className="mr-4 text-lg" />
                 Patients
               </NavLink>
             </li>
@@ -89,7 +91,7 @@ const AppLayout = ({ children }) => {
                 }
                 onClick={closeSidebar}
               >
-                <HeartPulse className="mr-4 text-lg" />
+                <FaHeartbeat className="mr-4 text-lg" />
                 Vitals
               </NavLink>
             </li>
@@ -105,7 +107,7 @@ const AppLayout = ({ children }) => {
                 }
                 onClick={closeSidebar}
               >
-                <PenBox className="mr-4 text-lg" />
+                <FaNotesMedical className="mr-4 text-lg" />
                 Symptoms
               </NavLink>
             </li>
@@ -121,7 +123,7 @@ const AppLayout = ({ children }) => {
                 }
                 onClick={closeSidebar}
               >
-                <Ambulance className="mr-4 text-lg" />
+                <FaAmbulance className="mr-4 text-lg" />
                 Emergency
               </NavLink>
             </li>
@@ -137,7 +139,7 @@ const AppLayout = ({ children }) => {
                 }
                 onClick={closeSidebar}
               >
-                <Lightbulb className="mr-4 text-lg" />
+                <FaLightbulb className="mr-4 text-lg" />
                 Motivational Tips
               </NavLink>
             </li>
@@ -153,7 +155,7 @@ const AppLayout = ({ children }) => {
                 }
                 onClick={closeSidebar}
               >
-                <BarChart className="mr-4 text-lg" />
+                <FaChartBar className="mr-4 text-lg" />
                 Analyze
               </NavLink>
             </li>
@@ -161,6 +163,7 @@ const AppLayout = ({ children }) => {
         </nav>
       </aside>
 
+      {/* Main Content */}
       <div className="w-full text-gray-600">
         <header className="bg-white w-full shadow-md p-4 flex items-center justify-between md:hidden">
           <Menu
