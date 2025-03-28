@@ -6,6 +6,12 @@ import AppLayout from "./components/AppLayout";
 import VitalSigns from "./pages/VitalSigns";
 import MotivationalTipsPage from "./pages/MotivationalTipsPage";
 
+import { ApolloClient, InMemoryCache, ApolloProvider } from "@apollo/client";
+const client = new ApolloClient({
+  uri: "http://localhost:4000/graphql",
+  cache: new InMemoryCache(),
+});
+
 const Dashboard = () => (
   <div>
     <div className="page-header">
@@ -105,72 +111,80 @@ const AnalyzePage = () => (
   </div>
 );
 
-function App() {
+function App({ user }) {
   return (
-    <Router>
-      <Routes>
-        <Route
-          path="/"
-          element={
-            <AppLayout>
-              <Dashboard />
-            </AppLayout>
-          }
-        />
+    <ApolloProvider client={client}>
+      <Router>
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <AppLayout>
+                <Dashboard />
+              </AppLayout>
+            }
+          />
 
-        {/* Protected Routes */}
+          {/* Protected Routes */}
 
-        <Route
-          path="/vitals"
-          element={
-            <AppLayout>
-              <VitalSigns />
-            </AppLayout>
-          }
-        />
-        <Route
-          path="/emergency"
-          element={
-            <AppLayout>
-              <EmergencyPage />
-            </AppLayout>
-          }
-        />
-        <Route
-          path="/symptoms"
-          element={
-            <AppLayout>
-              <SymptomsPage />
-            </AppLayout>
-          }
-        />
-        <Route
-          path="/patients"
-          element={
-            <AppLayout>
-              <PatientsPage />
-            </AppLayout>
-          }
-        />
-        <Route
-          path="/motivational-tips"
-          element={
-            <AppLayout>
-              <MotivationalTipsPage currentUser={{ role: "nurse" }} />
-            </AppLayout>
-          }
-        />
-        <Route
-          path="/analyze"
-          element={
-            <AppLayout>
-              <AnalyzePage />
-            </AppLayout>
-          }
-        />
-      </Routes>
-    </Router>
+          <Route
+            path="/vitals"
+            element={
+              <AppLayout>
+                <VitalSigns />
+              </AppLayout>
+            }
+          />
+          <Route
+            path="/emergency"
+            element={
+              <AppLayout>
+                <EmergencyPage />
+              </AppLayout>
+            }
+          />
+          <Route
+            path="/symptoms"
+            element={
+              <AppLayout>
+                <SymptomsPage />
+              </AppLayout>
+            }
+          />
+          <Route
+            path="/patients"
+            element={
+              <AppLayout>
+                <PatientsPage />
+              </AppLayout>
+            }
+          />
+          <Route
+            path="/motivational-tips"
+            element={
+              <AppLayout>
+                <MotivationalTipsPage currentUser={{ role: "nurse" }} />
+              </AppLayout>
+            }
+          />
+          <Route
+            path="/analyze"
+            element={
+              <AppLayout>
+                <AnalyzePage />
+              </AppLayout>
+            }
+          />
+        </Routes>
+      </Router>
+    </ApolloProvider>
   );
 }
 
-export default App;
+export default function AppWithProvider(props) {
+  return (
+    <ApolloProvider client={client}>
+      <App {...props} />
+    </ApolloProvider>
+  );
+}
