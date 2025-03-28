@@ -19,7 +19,7 @@ const resolvers = {
     },
 
     getAllUsers: async (_, { role }, context) => {
-      // await checkAuth(context, ["nurse"]);
+      await checkAuth(context, ["nurse"]);
       const query = role ? { role } : {};
       return User.find(query).select("-password");
     },
@@ -239,7 +239,7 @@ const resolvers = {
     //--------------------------------
     recordVitalSigns: async (_, { input }, { user }) => {
       // Authentication check
-      // if (!user) throw new AuthenticationError("Authentication required");
+      if (!user) throw new AuthenticationError("Authentication required");
 
       // Patient can only record their own vitals
       if (user.role === "patient" && user.id !== input.PatientID) {
@@ -344,17 +344,17 @@ function generateToken(user) {
       email: user.email,
       role: user.role,
     },
-    JWT_SECRET
-    // { expiresIn: JWT_EXPIRES_IN }
+    JWT_SECRET,
+    { expiresIn: JWT_EXPIRES_IN }
   );
 }
 
 async function checkAuth(context, allowedRoles = []) {
   console.log("Context received:", context);
-  const authHeader = context;
+  const authHeader = context.req.headers.authorization;
   if (!authHeader) throw new AuthenticationError("Authentication required");
 
-  const token = authHeader;
+  const token = authHeader.split(" ")[1];
   if (!token) throw new AuthenticationError("Invalid token format");
 
   try {

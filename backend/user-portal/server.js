@@ -41,7 +41,7 @@ async function startServer() {
     typeDefs,
     resolvers,
     context: ({ req }) => {
-      return { token: req.headers.authorization };
+      return { req, user: req.user };
     },
   });
 
