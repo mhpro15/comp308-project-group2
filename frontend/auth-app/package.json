@@ -1,13 +1,14 @@
 {
-  "name": "shell-app",
+  "name": "auth-app",
   "private": true,
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite --port=3000 --strictPort",
+    "dev": "vite --port=3001 --strictPort",
     "build": "vite build",
     "lint": "eslint src --ext js,jsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview --port=3000 --strictPort"
+    "preview": "vite preview --port=3001 --strictPort",
+    "deploy": "npm run build && npm run preview"
   },
   "dependencies": {
     "@apollo/client": "^3.13.5",
