@@ -1,13 +1,41 @@
+import React, { useState, useEffect } from 'react';
 import './App.css';
-import AuthComponent from './AuthComponent';
 import AuthForm from './components/AuthForm';
-function App() {
-return (
-<div className='App'>
-<AuthComponent />
-<AuthForm/>
+import LogoutButton from './components/LogoutButton';
 
-</div>
-);
+function App() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  // Check for token on app load
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      setIsAuthenticated(true);
+    }
+  }, []);
+
+  const handleAuthSuccess = () => {
+    setIsAuthenticated(true);
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('userId');
+    setIsAuthenticated(false);
+  };
+
+  return (
+    <div className="App">
+      {isAuthenticated ? (
+        <>
+          <h1>Welcome to the App!</h1>
+          <LogoutButton onLogout={handleLogout} />
+        </>
+      ) : (
+        <AuthForm onAuthSuccess={handleAuthSuccess} />
+      )}
+    </div>
+  );
 }
+
 export default App;
