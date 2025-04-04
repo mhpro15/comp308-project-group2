@@ -110,7 +110,18 @@ export default function AuthForm({ onAuthSuccess }) {
       {user ? (
         <>
           {user.role === "nurse" && (
-            <NurseApp user={user} apolloClient={client} />
+            <div
+              style={{
+                height: "100vh",
+                width: "100vw",
+                overflow: "hidden",
+                position: "absolute",
+                top: 50,
+                left: 0,
+              }}
+            >
+              <NurseApp user={user} apolloClient={client} />
+            </div>
           )}
         </>
       ) : (

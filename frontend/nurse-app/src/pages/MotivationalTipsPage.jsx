@@ -8,6 +8,7 @@ import {
 import { format } from "date-fns";
 import { GET_PATIENTS, CREATE_MOTIVATIONAL_TIP } from "../api/api";
 import { useQuery, useMutation } from "@apollo/client";
+import { gql } from "@apollo/client";
 
 const MotivationalTipsPage = ({ currentUser }) => {
   const [selectedPatient, setSelectedPatient] = useState("");
@@ -18,26 +19,7 @@ const MotivationalTipsPage = ({ currentUser }) => {
   const { data: patients, loading, error } = useQuery(GET_PATIENTS);
   const [createMotivation] = useMutation(CREATE_MOTIVATIONAL_TIP);
 
-  //   useEffect(() => {
-  //     if (currentUser && currentUser.role === "nurse") {
-  //       const assignedPatients = getPatientsByNurseId(currentUser.id);
-  //       setPatients(assignedPatients);
-
-  //       // Get all sent tips
-  //       const allTips = [];
-  //       assignedPatients.forEach((patient) => {
-  //         const patientTips = getMotivationalTips(patient.id);
-  //         allTips.push(...patientTips);
-  //       });
-
-  //       // Sort tips by timestamp (newest first)
-  //       allTips.sort(
-  //         (a, b) =>
-  //           new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
-  //       );
-  //       setSentTips(allTips);
-  //     }
-  //   }, [currentUser]);
+  // Removed the useEffect that was trying to use undefined functions
 
   const handleSubmit = async () => {
     if (!tipContent.trim()) {
@@ -59,21 +41,33 @@ const MotivationalTipsPage = ({ currentUser }) => {
           NurseID: currentUser.id,
           content: tipContent,
           title: "Motivational Tip",
-          timestamp: new Date().toISOString(),
+          timeStamp: new Date().toISOString(), // Fixed variable name to match schema (timeStamp instead of timestamp)
         };
 
-        const response = await createMotivation({ variables: { input } });
+        console.log("Submitting motivational tip:", input);
 
+        const response = await createMotivation({
+          variables: { input: input },
+        });
         console.log(response);
+
+        // Add to local state
+        const newTip = {
+          id: response.data.createMotivation.id,
+          patientId: selectedPatient,
+          content: tipContent,
+          timestamp: new Date().toISOString(),
+          read: false,
+        };
+
+        setSentTips((prev) => [newTip, ...prev]);
+
+        // Reset form
+        setTipContent("");
+        setSelectedPatient("");
+
+        alert("Success: Motivational tip sent successfully.");
       }
-
-      // // Add to local state
-      // setSentTips((prev) => [newTip, ...prev]);
-
-      // // Reset form
-      // setTipContent("");
-
-      alert("Success: Motivational tip sent successfully.");
     } catch (error) {
       alert("Error: Failed to send motivational tip.");
       console.error("Error sending motivational tip:", error);
@@ -83,7 +77,8 @@ const MotivationalTipsPage = ({ currentUser }) => {
   };
 
   const getPatientNameById = (patientId) => {
-    const patient = patients.find((p) => p.id === patientId);
+    if (!patients || !patients.getAllUsers) return "Unknown Patient";
+    const patient = patients.getAllUsers.find((p) => p.id === patientId);
     return patient ? patient.name : "Unknown Patient";
   };
 
@@ -154,11 +149,13 @@ const MotivationalTipsPage = ({ currentUser }) => {
                     className="w-full border rounded p-2"
                   >
                     <option value="">Select a patient</option>
-                    {patients?.getAllUsers.map((patient) => (
-                      <option key={patient.id} value={patient.id}>
-                        {patient.name}
-                      </option>
-                    ))}
+                    {patients?.getAllUsers
+                      .filter((user) => user.role === "patient")
+                      .map((patient) => (
+                        <option key={patient.id} value={patient.id}>
+                          {patient.name}
+                        </option>
+                      ))}
                   </select>
                 </div>
 

@@ -31,7 +31,7 @@ const VitalSigns = (currentUser) => {
       </div>
 
       {activeTab === "enter" ? (
-        <VitalSignsForm />
+        <VitalSignsForm user={currentUser} />
       ) : (
         <div className="vital-signs-history">
           <h2 className="text-xl font-semibold">Vital Signs History</h2>

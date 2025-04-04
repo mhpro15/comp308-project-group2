@@ -163,7 +163,7 @@ function App({ user, apolloClient }) {
             path="/motivational-tips"
             element={
               <AppLayout>
-                <MotivationalTipsPage currentUser={{ role: "nurse" }} />
+                <MotivationalTipsPage currentUser={user} />
               </AppLayout>
             }
           />

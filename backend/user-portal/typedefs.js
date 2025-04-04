@@ -1,4 +1,4 @@
-const { gql } = require('apollo-server-express');
+const { gql } = require("apollo-server-express");
 
 const typeDefs = gql`
   scalar DateTime
@@ -10,13 +10,13 @@ const typeDefs = gql`
     email: String!
     name: String!
     role: String! # 'patient' or 'nurse'
-   vitalSigns: [VitalSigns!]
+    vitalSigns: [VitalSigns!]
     symptomRecords: [SymptomRecord!]
   }
-    type AuthPayload {
-  token: String!
-  user: User!
-}
+  type AuthPayload {
+    token: String!
+    user: User!
+  }
 
   input UserInput {
     email: String!
@@ -51,8 +51,8 @@ const typeDefs = gql`
 
   type Motivation {
     id: ID!
-    PatientID:User
-    NurseID:[User!]##created for assignment
+    PatientID: User
+    NurseID: [User!] ##created for assignment
     title: String!
     content: String!
     timeStamp: DateTime!
@@ -87,13 +87,13 @@ const typeDefs = gql`
   }
 
   type Condition {
-    name: String!  # allowed values: "COVID-19", "RSV", "CHD"
+    name: String! # allowed values: "COVID-19", "RSV", "CHD"
     confidence: Float
   }
 
   type AIPrediction {
     conditions: [Condition]
-    riskLevel: String   # allowed values: "low", "medium", "high"
+    riskLevel: String # allowed values: "low", "medium", "high"
   }
   input SymptomInput {
     PatientID: ID!
@@ -123,62 +123,66 @@ const typeDefs = gql`
     submissionDate: DateTime
     aiPrediction: AIPredictionInput
   }
-    # Queries
-type Query {
-  # User queries
-  currentUser: User
-  getUser(id: ID!): User
-  getAllUsers(role: String): [User!]!
- # getUsersByRole(role: String!): [User!]!
-  
-  # Vital signs queries
-  getVitalSigns(id: ID!): VitalSigns
-  getPatientVitalSigns(PatientID: ID!): [VitalSigns!]!
-  
-  # Symptom queries
-  getSymptomRecord(id: ID!): SymptomRecord
-  getPatientSymptoms(PatientID: ID!): [SymptomRecord!]!
-  
-  # Alert queries
-  getAlert(id: ID!): Alert
-  getUserAlerts(userID: ID!): [Alert!]!
-  
-  # Motivation queries
-  getMotivation(id: ID!): Motivation
-  getPatientMotivations(PatientID: ID!): [Motivation!]!
-  getNurseMotivations(NurseID: ID!): [Motivation!]!
-}
+  # Queries
+  type Query {
+    # User queries
+    currentUser: User
+    getUser(id: ID!): User
+    getAllUsers(role: String): [User!]!
+    # getUsersByRole(role: String!): [User!]!
 
-# Mutations
-type Mutation {
-  # User mutations
-  login(email: String!, password: String!): AuthPayload!
-  register(input: UserInput!): AuthPayload!
-  updateUser(id: ID!, input: UserInput!): User!
-  deleteUser(id: ID!): Boolean!
-  
-  # Vital signs mutations
-  recordVitalSigns(input: VitalSignsInput!): VitalSigns!
-  updateVitalSigns(id: ID!, input: VitalSignsInput!): VitalSigns!
-  deleteVitalSigns(id: ID!): Boolean!
-  
-  # Symptom mutations
-  submitSymptoms(input: SymptomInput!): SymptomRecord!
-  updateAIPrediction(id: ID!, conditions: [String!]!, riskLevel: String!): SymptomRecord!
-  
-  # Alert mutations
-  createAlert(input: AlertInput!): Alert!
-  resolveAlert(id: ID!): Alert!
-  
-  # Motivation mutations
-  createMotivation(input: MotivationInput!): Motivation!
-  updateMotivation(id: ID!, content: String!): Motivation!
-  deleteMotivation(id: ID!): Boolean!
-  
-  # Relationship mutations
-  assignNurseToPatient(patientID: ID!, nurseID: ID!): User!
-  unassignNurseFromPatient(patientID: ID!): User!
-}
+    # Vital signs queries
+    getVitalSigns(id: ID!): VitalSigns
+    getPatientVitalSigns(PatientID: ID!): [VitalSigns!]!
+
+    # Symptom queries
+    getSymptomRecord(id: ID!): SymptomRecord
+    getPatientSymptoms(PatientID: ID!): [SymptomRecord!]!
+
+    # Alert queries
+    getAlert(id: ID!): Alert
+    getUserAlerts(userID: ID!): [Alert!]!
+
+    # Motivation queries
+    getMotivation(id: ID!): Motivation
+    getPatientMotivations(PatientID: ID!): [Motivation!]!
+    getNurseMotivations(NurseID: ID!): [Motivation!]!
+  }
+
+  # Mutations
+  type Mutation {
+    # User mutations
+    login(email: String!, password: String!): AuthPayload!
+    register(input: UserInput!): AuthPayload!
+    updateUser(id: ID!, input: UserInput!): User!
+    deleteUser(id: ID!): Boolean!
+
+    # Vital signs mutations
+    recordVitalSigns(input: VitalSignsInput!): VitalSigns!
+    updateVitalSigns(id: ID!, input: VitalSignsInput!): VitalSigns!
+    deleteVitalSigns(id: ID!): Boolean!
+
+    # Symptom mutations
+    submitSymptoms(input: SymptomInput!): SymptomRecord!
+    updateAIPrediction(
+      id: ID!
+      conditions: [String!]!
+      riskLevel: String!
+    ): SymptomRecord!
+
+    # Alert mutations
+    createAlert(input: AlertInput!): Alert!
+    resolveAlert(id: ID!): Alert!
+
+    # Motivation mutations
+    createMotivation(input: MotivationInput!): Motivation!
+    updateMotivation(id: ID!, content: String!): Motivation!
+    deleteMotivation(id: ID!): Boolean!
+
+    # Relationship mutations
+    assignNurseToPatient(patientID: ID!, nurseID: ID!): User!
+    unassignNurseFromPatient(patientID: ID!): User!
+  }
 `;
 
 module.exports = typeDefs;
