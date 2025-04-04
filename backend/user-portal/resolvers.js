@@ -29,6 +29,21 @@ const resolvers = {
       await checkAuth(context);
       return User.findById(id).select("-password");
     },
+
+    motivationsByPatient: async (_, { patientId }, { user }) => {
+      if (!user || (user.role !== "patient" && user.role !== "nurse")) {
+        throw new Error("Unauthorized access");
+      }
+
+      // Optionally, restrict patient to only their own data
+      if (user.role === "patient" && user.id !== patientId) {
+        throw new Error("Access denied");
+      }
+
+      return await Motivation.find({ PatientID: patientId }).populate(
+        "PatientID NurseID"
+      );
+    },
   },
 
   Mutation: {
@@ -138,6 +153,7 @@ const resolvers = {
       await newRecord.save();
       return newRecord.populate("User".role("patient"));
     },
+
     /* updateAIPrediction: async (_, { id, conditions, riskLevel }, { user }) => {
         if (!user || user.role !== 'nurse') {
           throw new Error('Unauthorized - only nurses can update predictions');
@@ -158,6 +174,7 @@ const resolvers = {
         return updatedRecord;
       },*/ //to be implemented
     // Alert Mutations
+
     createAlert: async (_, { input }) => {
       const newAlert = new Alert({
         user: input.user,

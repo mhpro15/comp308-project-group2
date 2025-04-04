@@ -6,14 +6,17 @@ import {
   Clock,
 } from "lucide-react";
 import { format } from "date-fns";
+import { GET_PATIENTS, CREATE_MOTIVATIONAL_TIP } from "../api/api";
+import { useQuery, useMutation } from "@apollo/client";
 
 const MotivationalTipsPage = ({ currentUser }) => {
-  const [patients, setPatients] = useState([]);
   const [selectedPatient, setSelectedPatient] = useState("");
   const [tipContent, setTipContent] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [sentTips, setSentTips] = useState([]);
   const [activeTab, setActiveTab] = useState("send");
+  const { data: patients, loading, error } = useQuery(GET_PATIENTS);
+  const [createMotivation] = useMutation(CREATE_MOTIVATIONAL_TIP);
 
   //   useEffect(() => {
   //     if (currentUser && currentUser.role === "nurse") {
@@ -51,25 +54,29 @@ const MotivationalTipsPage = ({ currentUser }) => {
 
     try {
       if (currentUser) {
-        const newTip = addMotivationalTip({
-          nurseId: currentUser.id,
-          patientId: selectedPatient,
+        const input = {
+          PatientID: selectedPatient,
+          NurseID: currentUser.id,
           content: tipContent,
-          timestamp: new Date(),
-        });
+          title: "Motivational Tip",
+          timestamp: new Date().toISOString(),
+        };
 
-        // // Add to local state
-        // setSentTips((prev) => [newTip, ...prev]);
+        const response = await createMotivation({ variables: { input } });
 
-        // // Reset form
-        // setTipContent("");
-
-        console.log(newTip);
-
-        alert("Success: Motivational tip sent successfully.");
+        console.log(response);
       }
+
+      // // Add to local state
+      // setSentTips((prev) => [newTip, ...prev]);
+
+      // // Reset form
+      // setTipContent("");
+
+      alert("Success: Motivational tip sent successfully.");
     } catch (error) {
       alert("Error: Failed to send motivational tip.");
+      console.error("Error sending motivational tip:", error);
     } finally {
       setSubmitting(false);
     }
@@ -112,14 +119,14 @@ const MotivationalTipsPage = ({ currentUser }) => {
           >
             Send Tip
           </button>
-          <button
+          {/* <button
             className={`px-4 py-2 ${
               activeTab === "history" ? "border-b-2 border-blue-500" : ""
             }`}
             onClick={() => setActiveTab("history")}
           >
             Tip History
-          </button>
+          </button> */}
         </div>
 
         {activeTab === "send" && (
@@ -147,7 +154,7 @@ const MotivationalTipsPage = ({ currentUser }) => {
                     className="w-full border rounded p-2"
                   >
                     <option value="">Select a patient</option>
-                    {patients.map((patient) => (
+                    {patients?.getAllUsers.map((patient) => (
                       <option key={patient.id} value={patient.id}>
                         {patient.name}
                       </option>
