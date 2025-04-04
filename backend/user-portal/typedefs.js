@@ -145,7 +145,7 @@ const typeDefs = gql`
 
     # Motivation queries
     getMotivation(id: ID!): Motivation
-    getPatientMotivations(PatientID: ID!): [Motivation!]!
+    motivationsByPatient(patientId: ID!): [Motivation!]!
     getNurseMotivations(NurseID: ID!): [Motivation!]!
   }
 
