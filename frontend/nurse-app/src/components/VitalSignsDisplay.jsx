@@ -5,7 +5,7 @@ import React from "react";
 export const VitalSignsDisplay = ({ vitalSigns, showDate = false }) => {
   return (
     <div className="health-grid">
-      {vitalSigns.bodyTemperature !== undefined && (
+      {vitalSigns?.bodyTemperature !== undefined && (
         <div className="border rounded-md shadow-sm">
           <div className="p-4 flex items-center space-x-4">
             <div className="p-2 bg-health-100 rounded-full text-health-600">
@@ -16,14 +16,14 @@ export const VitalSignsDisplay = ({ vitalSigns, showDate = false }) => {
                 Body Temperature
               </p>
               <p className="text-2xl font-bold">
-                {vitalSigns.bodyTemperature}°C
+                {vitalSigns?.bodyTemperature}°C
               </p>
             </div>
           </div>
         </div>
       )}
 
-      {vitalSigns.heartRate !== undefined && (
+      {vitalSigns?.heartRate !== undefined && (
         <div className="border rounded-md shadow-sm">
           <div className="p-4 flex items-center space-x-4">
             <div className="p-2 bg-health-100 rounded-full text-health-600">
@@ -33,14 +33,14 @@ export const VitalSignsDisplay = ({ vitalSigns, showDate = false }) => {
               <p className="text-sm font-medium text-muted-foreground">
                 Heart Rate
               </p>
-              <p className="text-2xl font-bold">{vitalSigns.heartRate} bpm</p>
+              <p className="text-2xl font-bold">{vitalSigns?.heartRate} bpm</p>
             </div>
           </div>
         </div>
       )}
 
-      {vitalSigns.bloodPressureSystolic !== undefined &&
-        vitalSigns.bloodPressureDiastolic !== undefined && (
+      {vitalSigns?.bloodPressureSystolic !== undefined &&
+        vitalSigns?.bloodPressureDiastolic !== undefined && (
           <div className="border rounded-md shadow-sm">
             <div className="p-4 flex items-center space-x-4">
               <div className="p-2 bg-health-100 rounded-full text-health-600">
@@ -51,15 +51,15 @@ export const VitalSignsDisplay = ({ vitalSigns, showDate = false }) => {
                   Blood Pressure
                 </p>
                 <p className="text-2xl font-bold">
-                  {vitalSigns.bloodPressureSystolic}/
-                  {vitalSigns.bloodPressureDiastolic} mmHg
+                  {vitalSigns?.bloodPressureSystolic}/
+                  {vitalSigns?.bloodPressureDiastolic} mmHg
                 </p>
               </div>
             </div>
           </div>
         )}
 
-      {vitalSigns.respiratoryRate !== undefined && (
+      {vitalSigns?.respiratoryRate !== undefined && (
         <div className="border rounded-md shadow-sm">
           <div className="p-4 flex items-center space-x-4">
             <div className="p-2 bg-health-100 rounded-full text-health-600">
@@ -70,14 +70,14 @@ export const VitalSignsDisplay = ({ vitalSigns, showDate = false }) => {
                 Respiratory Rate
               </p>
               <p className="text-2xl font-bold">
-                {vitalSigns.respiratoryRate} /min
+                {vitalSigns?.respiratoryRate} /min
               </p>
             </div>
           </div>
         </div>
       )}
 
-      {vitalSigns.weight !== undefined && (
+      {vitalSigns?.weight !== undefined && (
         <div className="border rounded-md shadow-sm">
           <div className="p-4 flex items-center space-x-4">
             <div className="p-2 bg-health-100 rounded-full text-health-600">
@@ -87,7 +87,7 @@ export const VitalSignsDisplay = ({ vitalSigns, showDate = false }) => {
               <p className="text-sm font-medium text-muted-foreground">
                 Weight
               </p>
-              <p className="text-2xl font-bold">{vitalSigns.weight} kg</p>
+              <p className="text-2xl font-bold">{vitalSigns?.weight} kg</p>
             </div>
           </div>
         </div>
@@ -96,11 +96,11 @@ export const VitalSignsDisplay = ({ vitalSigns, showDate = false }) => {
       {showDate && (
         <div className="col-span-full mt-2 text-sm text-muted-foreground">
           Recorded on{" "}
-          {format(new Date(vitalSigns.timestamp), "MMMM d, yyyy, h:mm a")}
-          {vitalSigns.notes && (
+          {format(new Date(vitalSigns?.timestamp), "MMMM d, yyyy, h:mm a")}
+          {vitalSigns?.notes && (
             <div className="mt-2 p-3 bg-muted rounded-md">
               <p className="font-medium">Notes:</p>
-              <p>{vitalSigns.notes}</p>
+              <p>{vitalSigns?.notes}</p>
             </div>
           )}
         </div>

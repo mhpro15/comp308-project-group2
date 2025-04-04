@@ -39,9 +39,8 @@ const GET_PATIENTS1 = gql`
     }
   }
 `;
-const NurseApp = lazy(() => import("nurseApp/NurseAppComponent"));
 
-export default function AuthForm({ onAuthSuccess }) {
+export default function AuthForm({ onAuthSuccess, onUserChange }) {
   const [isLogin, setIsLogin] = useState(true); // Toggle between login and register
   const [form, setForm] = useState({
     email: "",
@@ -65,10 +64,13 @@ export default function AuthForm({ onAuthSuccess }) {
           variables: { email: form.email, password: form.password },
         });
         localStorage.setItem("token", data.login.token);
-        localStorage.setItem("userId", data.login.user.id);
+        localStorage.setItem("user", JSON.stringify(data.login.user));
 
         if (onAuthSuccess) {
           onAuthSuccess({ id: data.login.user.id });
+        }
+        if (onUserChange) {
+          onUserChange(data.login.user); // Set user state in parent component
         }
 
         setUser(data.login.user);
@@ -107,57 +109,49 @@ export default function AuthForm({ onAuthSuccess }) {
 
   return (
     <div>
-      {user ? (
-        <>
-          {user.role === "nurse" && (
-            <NurseApp user={user} apolloClient={client} />
+      <>
+        <h2>{isLogin ? "Login" : "Register"}</h2>
+        {error && <p style={{ color: "red" }}>{error}</p>}
+        <form onSubmit={handleSubmit}>
+          {!isLogin && (
+            <>
+              <input
+                type="text"
+                placeholder="Name"
+                value={form.name}
+                onChange={(e) => setForm({ ...form, name: e.target.value })}
+                required
+              />
+              <select
+                value={form.role}
+                onChange={(e) => setForm({ ...form, role: e.target.value })}
+                required
+              >
+                <option value="patient">Patient</option>
+                <option value="nurse">Nurse</option>
+              </select>
+            </>
           )}
-        </>
-      ) : (
-        <>
-          <h2>{isLogin ? "Login" : "Register"}</h2>
-          {error && <p style={{ color: "red" }}>{error}</p>}
-          <form onSubmit={handleSubmit}>
-            {!isLogin && (
-              <>
-                <input
-                  type="text"
-                  placeholder="Name"
-                  value={form.name}
-                  onChange={(e) => setForm({ ...form, name: e.target.value })}
-                  required
-                />
-                <select
-                  value={form.role}
-                  onChange={(e) => setForm({ ...form, role: e.target.value })}
-                  required
-                >
-                  <option value="patient">Patient</option>
-                  <option value="nurse">Nurse</option>
-                </select>
-              </>
-            )}
-            <input
-              type="email"
-              placeholder="Email"
-              value={form.email}
-              onChange={(e) => setForm({ ...form, email: e.target.value })}
-              required
-            />
-            <input
-              type="password"
-              placeholder="Password"
-              value={form.password}
-              onChange={(e) => setForm({ ...form, password: e.target.value })}
-              required
-            />
-            <button type="submit">{isLogin ? "Login" : "Register"}</button>
-          </form>
-          <button onClick={() => setIsLogin(!isLogin)}>
-            {isLogin ? "Switch to Register" : "Switch to Login"}
-          </button>
-        </>
-      )}
+          <input
+            type="email"
+            placeholder="Email"
+            value={form.email}
+            onChange={(e) => setForm({ ...form, email: e.target.value })}
+            required
+          />
+          <input
+            type="password"
+            placeholder="Password"
+            value={form.password}
+            onChange={(e) => setForm({ ...form, password: e.target.value })}
+            required
+          />
+          <button type="submit">{isLogin ? "Login" : "Register"}</button>
+        </form>
+        <button onClick={() => setIsLogin(!isLogin)}>
+          {isLogin ? "Switch to Register" : "Switch to Login"}
+        </button>
+      </>
     </div>
   );
 }

@@ -1,26 +1,33 @@
-import React, { useState, useEffect } from 'react';
-import './App.css';
-import AuthForm from './components/AuthForm';
-import LogoutButton from './components/LogoutButton';
+import React, { useState, useEffect } from "react";
+import "./App.css";
+import AuthForm from "./components/AuthForm";
+import LogoutButton from "./components/LogoutButton";
 
-function App() {
+function App({ onUserChange }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   // Check for token on app load
   useEffect(() => {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem("token");
     if (token) {
       setIsAuthenticated(true);
     }
-  }, []);
+    if (onUserChange) {
+      const user = localStorage.getItem("user");
+      onUserChange(JSON.parse(user)); // Set user state in parent component
+    }
+  }, [onUserChange]);
 
   const handleAuthSuccess = () => {
     setIsAuthenticated(true);
   };
 
   const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('userId');
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    if (onUserChange) {
+      onUserChange(null); // Reset user state in parent component
+    }
     setIsAuthenticated(false);
   };
 
@@ -32,7 +39,10 @@ function App() {
           <LogoutButton onLogout={handleLogout} />
         </>
       ) : (
-        <AuthForm onAuthSuccess={handleAuthSuccess} />
+        <AuthForm
+          onAuthSuccess={handleAuthSuccess}
+          onUserChange={onUserChange}
+        />
       )}
     </div>
   );

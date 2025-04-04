@@ -199,20 +199,21 @@ const resolvers = {
     // Motivation mutations
     // ----------------------------
     createMotivation: async (_, { input }, { user }) => {
-      if (!user || user.role !== "nurse" || user.id !== input.nurseID) {
+      if (!user || user.role !== "nurse" || user.id !== input.NurseID) {
         throw new Error("Unauthorized - only nurses can create motivations");
       }
 
       const newMotivation = new Motivation({
-        PatientID: input.patientID,
-        NurseID: input.nurseID,
+        PatientID: input.PatientID,
+        NurseID: user.id,
         title: input.title,
         content: input.content,
         timeStamp: input.timeStamp || Date.now(),
       });
 
       await newMotivation.save();
-      return newMotivation.populate("patientID nurseID");
+      // Fix: Change from array syntax to string syntax for populate
+      return newMotivation.populate("PatientID NurseID");
     },
 
     updateMotivation: async (_, { id, content }, { user }) => {
@@ -231,7 +232,7 @@ const resolvers = {
 
       motivation.content = content;
       await motivation.save();
-      return motivation.populate("patientID nurseID");
+      return motivation.populate("PatientID NurseID");
     },
 
     deleteMotivation: async (_, { id }, { user }) => {
@@ -254,7 +255,8 @@ const resolvers = {
     //------------------------------
     // Vital Signs mutations
     //--------------------------------
-    recordVitalSigns: async (_, { input }, { user }) => {
+    recordVitalSigns: async (_, { input }, req) => {
+      const user = await checkAuth(req, ["nurse", "patient"]);
       // Authentication check
       if (!user) throw new AuthenticationError("Authentication required");
 
@@ -367,7 +369,7 @@ function generateToken(user) {
 }
 
 async function checkAuth(context, allowedRoles = []) {
-  console.log("Context received:", context);
+  // console.log("Context received:", context);
   const authHeader = context.req.headers.authorization;
   if (!authHeader) throw new AuthenticationError("Authentication required");
 

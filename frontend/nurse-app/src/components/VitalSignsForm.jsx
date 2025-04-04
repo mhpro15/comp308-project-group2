@@ -1,15 +1,9 @@
 import { useEffect, useState } from "react";
 import { Thermometer, Heart, Droplet, Activity, Weight } from "lucide-react";
-import {
-  useQuery,
-  ApolloClient,
-  InMemoryCache,
-  ApolloProvider,
-  useMutation,
-} from "@apollo/client";
+import { useQuery, useMutation } from "@apollo/client";
 import { GET_PATIENTS, RECORD_VITAL_SIGNS } from "../api/api";
 
-const VitalSignsForm = () => {
+const VitalSignsForm = (user) => {
   const [bodyTemperature, setBodyTemperature] = useState("");
   const [heartRate, setHeartRate] = useState("");
   const [bloodPressureSystolic, setBloodPressureSystolic] = useState("");
@@ -20,8 +14,7 @@ const VitalSignsForm = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedPatient, setSelectedPatient] = useState("");
   const { data, loading, error } = useQuery(GET_PATIENTS);
-  const [recordVitalSigns, { data: newRecord }] =
-    useMutation(RECORD_VITAL_SIGNS);
+  const [recordVitalSigns] = useMutation(RECORD_VITAL_SIGNS);
 
   useEffect(() => {
     if (data) {
@@ -37,16 +30,18 @@ const VitalSignsForm = () => {
     try {
       const input = {
         PatientID: selectedPatient,
-        Temperature: bodyTemperature,
-        BPsystolic: bloodPressureSystolic,
-        BPdiastolic: bloodPressureDiastolic,
-        RespiratoryRate: respiratoryRate,
-        weight: weight,
-        notes: notes,
+        NurseID: user.id || "",
+        Temperature: parseFloat(bodyTemperature) || 0,
+        BPsystolic: parseInt(bloodPressureSystolic) || 0,
+        BPdiastolic: parseInt(bloodPressureDiastolic) || 0,
+        RespiratoryRate: parseInt(respiratoryRate) || 0,
+        weight: parseFloat(weight) || 0,
+        notes: notes || "",
       };
 
-      await recordVitalSigns({ variables: { input } });
-
+      console.log("Submitting vital signs:", input);
+      const result = await recordVitalSigns({ variables: { input: input } });
+      console.log("Result:", result);
       setBodyTemperature("");
       setHeartRate("");
       setBloodPressureSystolic("");
@@ -56,6 +51,12 @@ const VitalSignsForm = () => {
       setNotes("");
     } catch (error) {
       console.error("Error recording vital signs:", error);
+      if (error.graphQLErrors) {
+        console.error("GraphQL Errors:", error.graphQLErrors);
+      }
+      if (error.networkError) {
+        console.error("Network Error:", error.networkError);
+      }
     } finally {
       setIsSubmitting(false);
     }
