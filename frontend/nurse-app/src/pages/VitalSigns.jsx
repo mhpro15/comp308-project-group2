@@ -4,7 +4,7 @@ import VitalSignsHistory from "../components/VitalSignsHistory";
 
 const VitalSigns = (currentUser) => {
   const [activeTab, setActiveTab] = React.useState("enter");
-
+  console.log("Current User in VitalSigns:", currentUser);
   return (
     <div className="w-max-content mx-auto">
       <div className="flex mb-4 border-b">
