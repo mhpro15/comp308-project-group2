@@ -49,38 +49,6 @@ const AppLayout = ({ children }) => {
           <ul className="space-y-4 px-2">
             <li>
               <NavLink
-                to="/"
-                className={({ isActive }) =>
-                  `flex items-center px-6 py-4 rounded-lg text-base font-semibold ${
-                    isActive
-                      ? "bg-blue-50 text-blue-600 border-l-4 border-blue-500"
-                      : "text-gray-700 hover:bg-gray-100 hover:text-blue-500"
-                  }`
-                }
-                onClick={closeSidebar}
-              >
-                <FaHome className="mr-4 text-lg" />
-                Dashboard
-              </NavLink>
-            </li>
-            <li>
-              <NavLink
-                to="/patients"
-                className={({ isActive }) =>
-                  `flex items-center px-6 py-4 rounded-lg text-base font-semibold ${
-                    isActive
-                      ? "bg-blue-50 text-blue-600 border-l-4 border-blue-500"
-                      : "text-gray-700 hover:bg-gray-100 hover:text-blue-500"
-                  }`
-                }
-                onClick={closeSidebar}
-              >
-                <FaUserInjured className="mr-4 text-lg" />
-                Patients
-              </NavLink>
-            </li>
-            <li>
-              <NavLink
                 to="/vitals"
                 className={({ isActive }) =>
                   `flex items-center px-6 py-4 rounded-lg text-base font-semibold ${

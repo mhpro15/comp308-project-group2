@@ -21,6 +21,7 @@ export const RECORD_VITAL_SIGNS = gql`
       RespiratoryRate
       weight
       notes
+      heartRate
       timeStamp
       PatientID {
         id
@@ -45,6 +46,30 @@ export const GET_VITAL_SIGNS = gql`
       Temperature
       BPsystolic
       BPdiastolic
+      RespiratoryRate
+      weight
+      notes
+      timeStamp
+      PatientID {
+        name
+        id
+      }
+    }
+  }
+`;
+
+export const GET_PATIENT_VITAL_SIGNS = gql`
+  query GetPatientVitalSigns($patientId: ID!) {
+    getPatientVitalSigns(PatientID: $patientId) {
+      id
+      NurseID {
+        id
+        name
+      }
+      Temperature
+      BPsystolic
+      BPdiastolic
+      heartRate
       RespiratoryRate
       weight
       notes

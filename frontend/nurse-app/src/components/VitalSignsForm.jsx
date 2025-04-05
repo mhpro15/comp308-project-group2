@@ -35,6 +35,7 @@ const VitalSignsForm = (user) => {
         BPsystolic: parseInt(bloodPressureSystolic) || 0,
         BPdiastolic: parseInt(bloodPressureDiastolic) || 0,
         RespiratoryRate: parseInt(respiratoryRate) || 0,
+        heartRate: parseInt(heartRate) || 0,
         weight: parseFloat(weight) || 0,
         notes: notes || "",
       };

@@ -8,7 +8,7 @@ const client = new ApolloClient({
   cache: new InMemoryCache(),
 });
 createRoot(document.getElementById("root")).render(
-  <ApolloClient client={client}>
+  <ApolloProvider client={client}>
     <App />
-  </ApolloClient>
+  </ApolloProvider>
 );
