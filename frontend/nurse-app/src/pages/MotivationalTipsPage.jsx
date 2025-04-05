@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import {
   MessageCircleHeart,
   User as UserIcon,
@@ -8,7 +8,6 @@ import {
 import { format } from "date-fns";
 import { GET_PATIENTS, CREATE_MOTIVATIONAL_TIP } from "../api/api";
 import { useQuery, useMutation } from "@apollo/client";
-import { gql } from "@apollo/client";
 
 const MotivationalTipsPage = ({ currentUser }) => {
   const [selectedPatient, setSelectedPatient] = useState("");
@@ -16,10 +15,8 @@ const MotivationalTipsPage = ({ currentUser }) => {
   const [submitting, setSubmitting] = useState(false);
   const [sentTips, setSentTips] = useState([]);
   const [activeTab, setActiveTab] = useState("send");
-  const { data: patients, loading, error } = useQuery(GET_PATIENTS);
+  const { data: patients } = useQuery(GET_PATIENTS);
   const [createMotivation] = useMutation(CREATE_MOTIVATIONAL_TIP);
-
-  // Removed the useEffect that was trying to use undefined functions
 
   const handleSubmit = async () => {
     if (!tipContent.trim()) {
@@ -41,7 +38,7 @@ const MotivationalTipsPage = ({ currentUser }) => {
           NurseID: currentUser.id,
           content: tipContent,
           title: "Motivational Tip",
-          timeStamp: new Date().toISOString(), // Fixed variable name to match schema (timeStamp instead of timestamp)
+          timeStamp: new Date().toISOString(),
         };
 
         console.log("Submitting motivational tip:", input);
@@ -51,7 +48,6 @@ const MotivationalTipsPage = ({ currentUser }) => {
         });
         console.log(response);
 
-        // Add to local state
         const newTip = {
           id: response.data.createMotivation.id,
           patientId: selectedPatient,
@@ -62,7 +58,6 @@ const MotivationalTipsPage = ({ currentUser }) => {
 
         setSentTips((prev) => [newTip, ...prev]);
 
-        // Reset form
         setTipContent("");
         setSelectedPatient("");
 
@@ -84,69 +79,83 @@ const MotivationalTipsPage = ({ currentUser }) => {
 
   if (!currentUser || currentUser.role !== "nurse") {
     return (
-      <div className="border rounded-lg p-4">
-        <div className="p-4">
-          <h3 className="text-lg font-bold">Access Restricted</h3>
-          <p className="text-gray-500">
-            This page is only accessible to nurse users.
-          </p>
+      <div className="bg-white border rounded-lg shadow-sm p-6 max-w-3xl mx-auto mt-8">
+        <div className="flex items-center justify-center p-8">
+          <div className="text-center">
+            <h3 className="text-xl font-bold text-gray-800 mb-2">
+              Access Restricted
+            </h3>
+            <p className="text-gray-600">
+              This page is only accessible to nurse users.
+            </p>
+          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight">Motivational Tips</h1>
-        <p className="text-gray-500">
-          Send encouraging messages to your patients
+    <div className="max-w-4xl mx-auto py-6 space-y-8">
+      <div className="border-b pb-4">
+        <h1 className="text-3xl font-bold tracking-tight text-blue-700">
+          Motivational Tips
+        </h1>
+        <p className="text-gray-600 mt-2">
+          Send encouraging messages to your patients to support their health
+          journey
         </p>
       </div>
 
-      <div>
-        <div className="border-b">
+      <div className="bg-white rounded-lg shadow-sm">
+        <div className="flex border-b">
           <button
-            className={`px-4 py-2 ${
-              activeTab === "send" ? "border-b-2 border-blue-500" : ""
+            className={`px-6 py-3 font-medium text-sm transition-colors duration-200 ${
+              activeTab === "send"
+                ? "border-b-2 border-blue-600 text-blue-600"
+                : "text-gray-600 hover:text-blue-500 hover:bg-blue-50"
             }`}
             onClick={() => setActiveTab("send")}
           >
             Send Tip
           </button>
-          {/* <button
-            className={`px-4 py-2 ${
-              activeTab === "history" ? "border-b-2 border-blue-500" : ""
+          <button
+            className={`px-6 py-3 font-medium text-sm transition-colors duration-200 ${
+              activeTab === "history"
+                ? "border-b-2 border-blue-600 text-blue-600"
+                : "text-gray-600 hover:text-blue-500 hover:bg-blue-50"
             }`}
             onClick={() => setActiveTab("history")}
           >
             Tip History
-          </button> */}
+          </button>
         </div>
 
         {activeTab === "send" && (
-          <div className="mt-4">
-            <div className="border rounded-lg p-4">
-              <div className="p-4">
-                <h3 className="flex items-center text-lg font-bold">
-                  <MessageCircleHeart className="h-5 w-5 mr-2 text-blue-500" />
+          <div className="p-6">
+            <div className="bg-white border rounded-lg shadow-sm overflow-hidden">
+              <div className="bg-gradient-to-r from-blue-50 to-blue-100 p-5">
+                <h3 className="flex items-center text-lg font-bold text-blue-800">
+                  <MessageCircleHeart className="h-6 w-6 mr-2 text-blue-600" />
                   New Motivational Tip
                 </h3>
-                <p className="text-gray-500">
+                <p className="text-gray-600 mt-1">
                   Share encouragement, health tips, or reminders with your
                   patients
                 </p>
               </div>
-              <div className="p-4 space-y-4">
+              <div className="p-5 space-y-6">
                 <div className="space-y-2">
-                  <label htmlFor="patient" className="block font-medium">
+                  <label
+                    htmlFor="patient"
+                    className="block text-sm font-medium text-gray-700"
+                  >
                     Select Patient
                   </label>
                   <select
                     id="patient"
                     value={selectedPatient}
                     onChange={(e) => setSelectedPatient(e.target.value)}
-                    className="w-full border rounded p-2"
+                    className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
                   >
                     <option value="">Select a patient</option>
                     {patients?.getAllUsers
@@ -160,7 +169,10 @@ const MotivationalTipsPage = ({ currentUser }) => {
                 </div>
 
                 <div className="space-y-2">
-                  <label htmlFor="tipContent" className="block font-medium">
+                  <label
+                    htmlFor="tipContent"
+                    className="block text-sm font-medium text-gray-700"
+                  >
                     Motivational Message
                   </label>
                   <textarea
@@ -169,35 +181,37 @@ const MotivationalTipsPage = ({ currentUser }) => {
                     value={tipContent}
                     onChange={(e) => setTipContent(e.target.value)}
                     rows={4}
-                    className="w-full border rounded p-2"
+                    className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
                   />
-                  <p className="text-sm text-gray-500">
+                  <p className="text-sm text-gray-500 italic">
                     Keep messages positive, concise, and actionable.
                   </p>
                 </div>
               </div>
-              <div className="p-4 border-t">
+              <div className="bg-gray-50 p-5 border-t">
                 <button
                   onClick={handleSubmit}
                   disabled={
                     submitting || !tipContent.trim() || !selectedPatient
                   }
-                  className="bg-blue-500 text-white px-4 py-2 rounded disabled:opacity-50"
+                  className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-md font-medium transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {submitting ? "Sending..." : "Send Tip"}
                 </button>
               </div>
             </div>
 
-            <div className="border rounded-lg p-4 mt-6">
-              <div className="p-4">
-                <h3 className="text-lg font-bold">Tip Templates</h3>
-                <p className="text-gray-500">
+            <div className="bg-white border rounded-lg shadow-sm mt-8 overflow-hidden">
+              <div className="bg-gradient-to-r from-gray-50 to-gray-100 p-5">
+                <h3 className="text-lg font-bold text-gray-800">
+                  Tip Templates
+                </h3>
+                <p className="text-gray-600 mt-1">
                   Quick templates you can use or modify
                 </p>
               </div>
-              <div className="p-4">
-                <div className="grid gap-2">
+              <div className="p-5">
+                <div className="grid gap-3">
                   {[
                     "Remember to stay hydrated by drinking at least 8 glasses of water today!",
                     "Taking a 10-minute walk today can boost your mood and energy levels.",
@@ -207,7 +221,7 @@ const MotivationalTipsPage = ({ currentUser }) => {
                   ].map((template, index) => (
                     <button
                       key={index}
-                      className="border rounded text-left text-sm px-3 py-2"
+                      className="bg-white border border-gray-200 hover:border-blue-300 hover:bg-blue-50 rounded-md text-left text-sm px-4 py-3 transition-colors duration-200"
                       onClick={() => setTipContent(template)}
                     >
                       {template}
@@ -220,42 +234,47 @@ const MotivationalTipsPage = ({ currentUser }) => {
         )}
 
         {activeTab === "history" && (
-          <div className="mt-4">
-            <div className="border rounded-lg p-4">
-              <div className="p-4">
-                <h3 className="flex items-center text-lg font-bold">
-                  <Clock className="h-5 w-5 mr-2 text-blue-500" />
+          <div className="p-6">
+            <div className="bg-white border rounded-lg shadow-sm overflow-hidden">
+              <div className="bg-gradient-to-r from-gray-50 to-gray-100 p-5">
+                <h3 className="flex items-center text-lg font-bold text-gray-800">
+                  <Clock className="h-5 w-5 mr-2 text-blue-600" />
                   Sent Tips History
                 </h3>
-                <p className="text-gray-500">
+                <p className="text-gray-600 mt-1">
                   Previous motivational tips you've sent to patients
                 </p>
               </div>
-              <div className="p-4">
+              <div className="p-5">
                 {sentTips.length === 0 ? (
-                  <div className="border rounded-md p-4 bg-yellow-50">
-                    <h4 className="font-bold">No tips sent yet</h4>
-                    <p>
+                  <div className="border rounded-lg p-6 bg-yellow-50 text-center">
+                    <h4 className="font-bold text-yellow-800 mb-2">
+                      No tips sent yet
+                    </h4>
+                    <p className="text-yellow-700">
                       You haven't sent any motivational tips to your patients
                       yet.
                     </p>
                   </div>
                 ) : (
-                  <div className="space-y-4">
+                  <div className="space-y-5">
                     {sentTips.map((tip) => (
-                      <div key={tip.id} className="border rounded-md p-4">
-                        <div className="flex items-center justify-between mb-2">
+                      <div
+                        key={tip.id}
+                        className="border rounded-lg p-5 hover:shadow-md transition-shadow"
+                      >
+                        <div className="flex items-center justify-between mb-3">
                           <div className="flex items-center">
-                            <UserIcon className="h-4 w-4 mr-2 text-blue-500" />
-                            <span className="font-medium">
+                            <UserIcon className="h-4 w-4 mr-2 text-blue-600" />
+                            <span className="font-medium text-gray-800">
                               {getPatientNameById(tip.patientId)}
                             </span>
                           </div>
                           <span
-                            className={`text-xs px-2 py-1 rounded-full ${
+                            className={`text-xs px-3 py-1 rounded-full font-medium ${
                               tip.read
-                                ? "border bg-gray-100"
-                                : "bg-blue-500 text-white"
+                                ? "border bg-gray-100 text-gray-600"
+                                : "bg-blue-600 text-white"
                             }`}
                           >
                             {tip.read ? (
@@ -269,9 +288,12 @@ const MotivationalTipsPage = ({ currentUser }) => {
                           </span>
                         </div>
 
-                        <p className="text-sm mb-2">{tip.content}</p>
+                        <p className="text-gray-700 mb-3 bg-blue-50 p-3 rounded-md italic">
+                          {tip.content}
+                        </p>
 
-                        <p className="text-xs text-gray-500">
+                        <p className="text-xs text-gray-500 flex items-center">
+                          <Clock className="h-3 w-3 mr-1" />
                           Sent:{" "}
                           {format(
                             new Date(tip.timestamp),
