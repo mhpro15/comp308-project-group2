@@ -1,5 +1,5 @@
-import React, { lazy, useState } from "react";
-import { gql, useMutation, useQuery } from "@apollo/client";
+import React, { useState } from "react";
+import { gql, useMutation } from "@apollo/client";
 import client from "../apollo/client";
 
 // GraphQL Mutations

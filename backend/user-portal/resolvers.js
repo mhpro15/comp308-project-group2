@@ -30,6 +30,34 @@ const resolvers = {
       return User.findById(id).select("-password");
     },
 
+    // Get vital signs by ID
+    getVitalSigns: async (_, { id }, context) => {
+      await checkAuth(context);
+      return VitalSigns.findById(id).populate("PatientID NurseID");
+    },
+
+    // Get vital signs for a specific patient
+    getPatientVitalSigns: async (_, { PatientID }, context) => {
+      await checkAuth(context);
+      return VitalSigns.find({ PatientID })
+        .populate("PatientID NurseID")
+        .sort({ timeStamp: -1 });
+    },
+
+    // Get symptom record by ID
+    getSymptomRecord: async (_, { id }, context) => {
+      await checkAuth(context);
+      return SymptomRecord.findById(id).populate("PatientID");
+    },
+
+    // Get symptom records for a specific patient
+    getPatientSymptoms: async (_, { PatientID }, context) => {
+      await checkAuth(context);
+      return SymptomRecord.find({ PatientID })
+        .populate("PatientID")
+        .sort({ submissionDate: -1 });
+    },
+
     motivationsByPatient: async (_, { patientId }, { user }) => {
       if (!user || (user.role !== "patient" && user.role !== "nurse")) {
         throw new Error("Unauthorized access");
@@ -146,12 +174,13 @@ const resolvers = {
 
       // Create a new symptom record using the input provided
       const newRecord = new SymptomRecord({
-        PatientID: user.id,
+        PatientID: input.PatientID,
         symptoms: input.symptoms,
+        submissionDate: new Date(),
       });
       // Save the new record to the database
       await newRecord.save();
-      return newRecord.populate("User".role("patient"));
+      return newRecord.populate("PatientID");
     },
 
     /* updateAIPrediction: async (_, { id, conditions, riskLevel }, { user }) => {
@@ -274,6 +303,7 @@ const resolvers = {
         PatientID: input.PatientID,
         NurseID: nurseID,
         Temperature: input.Temperature,
+        heartRate: input.heartRate,
         BPsystolic: input.BPsystolic,
         BPdiastolic: input.BPdiastolic,
         RespiratoryRate: input.RespiratoryRate,

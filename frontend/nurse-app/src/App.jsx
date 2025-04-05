@@ -6,41 +6,6 @@ import AppLayout from "./components/AppLayout";
 import VitalSigns from "./pages/VitalSigns";
 import MotivationalTipsPage from "./pages/MotivationalTipsPage";
 
-const Dashboard = () => (
-  <div>
-    <div className="page-header">
-      <h1 className="page-title">Dashboard</h1>
-    </div>
-    <div className="card">
-      <div className="card-header">
-        <h2 className="card-title">Welcome Back</h2>
-      </div>
-      <div className="card-body">
-        <p>
-          This is your nursing dashboard. View your daily tasks and patient
-          information.
-        </p>
-      </div>
-    </div>
-  </div>
-);
-
-const VitalsPage = () => (
-  <div>
-    <div className="page-header">
-      <h1 className="page-title">Patient Vitals</h1>
-    </div>
-    <div className="card">
-      <div className="card-header">
-        <h2 className="card-title">Vital Signs Monitor</h2>
-      </div>
-      <div className="card-body">
-        <p>View and track patient vital signs here.</p>
-      </div>
-    </div>
-  </div>
-);
-
 const EmergencyPage = () => (
   <div>
     <div className="page-header">
@@ -73,22 +38,6 @@ const SymptomsPage = () => (
   </div>
 );
 
-const PatientsPage = () => (
-  <div>
-    <div className="page-header">
-      <h1 className="page-title">Patient Management</h1>
-    </div>
-    <div className="card">
-      <div className="card-header">
-        <h2 className="card-title">Patient Records</h2>
-      </div>
-      <div className="card-body">
-        <p>Access and manage patient records here.</p>
-      </div>
-    </div>
-  </div>
-);
-
 const AnalyzePage = () => (
   <div>
     <div className="page-header">
@@ -109,15 +58,6 @@ function App({ user }) {
   return (
     <Router>
       <Routes>
-        <Route
-          path="/"
-          element={
-            <AppLayout>
-              <Dashboard />
-            </AppLayout>
-          }
-        />
-
         {/* Protected Routes */}
 
         <Route
@@ -144,14 +84,7 @@ function App({ user }) {
             </AppLayout>
           }
         />
-        <Route
-          path="/patients"
-          element={
-            <AppLayout>
-              <PatientsPage />
-            </AppLayout>
-          }
-        />
+
         <Route
           path="/motivational-tips"
           element={

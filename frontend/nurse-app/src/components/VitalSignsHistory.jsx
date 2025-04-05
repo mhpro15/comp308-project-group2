@@ -1,53 +1,86 @@
 import { useEffect, useState } from "react";
-import { Activity, FileDown } from "lucide-react";
+import { Activity, FileDown, RefreshCw } from "lucide-react"; // Added RefreshCw icon
 import { VitalSignsDisplay } from "./VitalSignsDisplay";
 import { format } from "date-fns";
 import { useQuery } from "@apollo/client";
-import { GET_PATIENTS, GET_VITAL_SIGNS } from "../api/api";
+import { GET_PATIENTS, GET_PATIENT_VITAL_SIGNS } from "../api/api";
 
-const VitalSignsHistory = (currentUser) => {
-  const [vitalSigns, setVitalSigns] = useState([]);
+const VitalSignsHistory = ({ user }) => {
   const [selectedPatient, setSelectedPatient] = useState("");
+  const [isRefetching, setIsRefetching] = useState(false);
+  console.log("Current User in VitalSignsHistory:", user);
   const {
     data: patients,
     loading: patientsLoading,
-    error,
+    error: patientsError,
   } = useQuery(GET_PATIENTS);
-  const { data, loading } = useQuery(GET_VITAL_SIGNS, {
-    variables: { getVitalSignsId: currentUser.id },
+
+  const {
+    data: vitalSignsData,
+    loading: vitalSignsLoading,
+    error: vitalSignsError,
+    refetch,
+  } = useQuery(GET_PATIENT_VITAL_SIGNS, {
+    variables: {
+      patientId: selectedPatient || (user?.role === "patient" ? user.id : ""),
+    },
+    skip: !selectedPatient && user?.role !== "patient",
+    fetchPolicy: "network-only",
   });
-  console.log(data?.getVitalSigns);
-  useEffect(() => {
-    if (currentUser) {
-      const patientId =
-        currentUser.role === "nurse" ? "patient1" : currentUser.id; // Replace with selected patient for nurse
-      const records = {};
-      setVitalSigns(records);
+
+  const handleRefetch = async () => {
+    setIsRefetching(true);
+    try {
+      await refetch();
+    } finally {
+      setIsRefetching(false);
     }
-  }, [currentUser]);
+  };
 
-  if (loading) return <p>Loading vital signs data...</p>;
+  useEffect(() => {
+    if (user) {
+      if (user.role === "patient") {
+        setSelectedPatient(user.id);
+      } else if (patients?.getAllUsers?.length > 0 && !selectedPatient) {
+        // Optionally set to first patient for nurse
+        const firstPatient = patients.getAllUsers.find(
+          (user) => user.role === "patient"
+        );
+        if (firstPatient) {
+          setSelectedPatient(firstPatient.id);
+        }
+      }
+    }
+  }, [user, patients, selectedPatient]);
 
-  if (!data?.getVitalSigns || data?.getVitalSigns.length === 0) {
+  useEffect(() => {
+    if (selectedPatient) {
+      refetch({ patientId: selectedPatient });
+    }
+  }, [selectedPatient, refetch]);
+
+  if (vitalSignsLoading || patientsLoading) {
+    return <p>Loading vital signs data...</p>;
+  }
+
+  if (vitalSignsError) {
     return (
       <div className="border rounded-lg p-4 shadow-sm">
         <div className="p-4">
           <h2 className="text-xl font-bold">Vital Signs History</h2>
-          <p className="text-gray-500">
-            No vital signs records found. Start by recording new vital signs.
+          <p className="text-red-500">
+            Error loading vital signs: {vitalSignsError.message}
           </p>
         </div>
       </div>
     );
   }
 
+  const vitalSigns = vitalSignsData?.getPatientVitalSigns || [];
+
   return (
     <div className="border rounded-lg p-4 shadow-sm">
-      {patientsLoading ? (
-        <p>Loading patients...</p>
-      ) : error ? (
-        <p className="text-red-500">Error loading patients: {error.message}</p>
-      ) : (
+      {user?.role == "nurse" && (
         <div className="mb-6">
           <label
             htmlFor="patientSelect"
@@ -58,14 +91,12 @@ const VitalSignsHistory = (currentUser) => {
           <select
             id="patientSelect"
             value={selectedPatient}
-            onChange={(e) => {
-              setSelectedPatient(e.target.value);
-            }}
+            onChange={(e) => setSelectedPatient(e.target.value)}
             className="w-full p-2 border rounded mb-4"
           >
             <option value="">-- Select a patient --</option>
-            {patients.getAllUsers
-              .filter((user) => user.role === "patient")
+            {patients?.getAllUsers
+              ?.filter((user) => user.role === "patient")
               .map((patient) => (
                 <option key={patient.id} value={patient.id}>
                   {patient.name}
@@ -85,19 +116,32 @@ const VitalSignsHistory = (currentUser) => {
               View historical vital signs measurements
             </p>
           </div>
-          <button className="border rounded px-3 py-1 hidden md:flex items-center gap-1">
-            <FileDown className="h-4 w-4" />
-            Export
-          </button>
+          <div className="flex gap-2">
+            <button
+              onClick={handleRefetch}
+              disabled={isRefetching || vitalSignsLoading}
+              className="border rounded px-3 py-1 flex items-center gap-1 hover:bg-gray-50 transition-colors"
+            >
+              <RefreshCw
+                className={`h-4 w-4 ${isRefetching ? "animate-spin" : ""}`}
+              />
+              {isRefetching ? "Refreshing..." : "Refresh"}
+            </button>
+            <button className="border rounded px-3 py-1 hidden md:flex items-center gap-1">
+              <FileDown className="h-4 w-4" />
+              Export
+            </button>
+          </div>
         </div>
       </div>
       <div className="p-4">
         <h3 className="text-lg font-medium mb-4">Latest Record</h3>
-        {!data?.getVitalSigns[0] ? (
+        {vitalSigns.length === 0 ? (
           <p>No vital signs records found for this patient.</p>
         ) : (
           <VitalSignsDisplay
-            vitalSigns={data.getVitalSigns[0]}
+            user={user}
+            selectedPatient={selectedPatient}
             showDate={true}
           />
         )}
@@ -118,10 +162,10 @@ const VitalSignsHistory = (currentUser) => {
               </tr>
             </thead>
             <tbody>
-              {data?.getVitalSigns?.map((record) => (
+              {vitalSigns.map((record) => (
                 <tr key={record.id} className="border-b">
                   <td className="p-2">
-                    {format(new Date(record.timeStamp), "MMM d, yyyy")}
+                    {format(new Date(record.timeStamp), "MMM d, yyyy HH:mm")}
                   </td>
                   <td className="p-2">
                     {record?.Temperature !== undefined
@@ -129,8 +173,9 @@ const VitalSignsHistory = (currentUser) => {
                       : "-"}
                   </td>
                   <td className="p-2">
-                    {/* Heart rate not present in schema */}
-                    {"-"}
+                    {record?.heartRate !== undefined
+                      ? `${record.heartRate} bpm`
+                      : "-"}
                   </td>
                   <td className="p-2">
                     {record?.BPsystolic !== undefined &&

@@ -2,7 +2,7 @@ import React from "react";
 import VitalSignsForm from "../components/VitalSignsForm";
 import VitalSignsHistory from "../components/VitalSignsHistory";
 
-const VitalSigns = (currentUser) => {
+const VitalSigns = ({ currentUser }) => {
   const [activeTab, setActiveTab] = React.useState("enter");
   console.log("Current User in VitalSigns:", currentUser);
   return (
@@ -35,7 +35,7 @@ const VitalSigns = (currentUser) => {
       ) : (
         <div className="vital-signs-history">
           <h2 className="text-xl font-semibold">Vital Signs History</h2>
-          <VitalSignsHistory currentUser={currentUser} />
+          <VitalSignsHistory user={currentUser} />
         </div>
       )}
     </div>

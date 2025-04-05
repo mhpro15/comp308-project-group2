@@ -32,6 +32,7 @@ const typeDefs = gql`
     Temperature: Float!
     BPsystolic: Int!
     BPdiastolic: Int!
+    heartRate: Int!
     RespiratoryRate: Int!
     weight: Float!
     notes: String
@@ -43,6 +44,7 @@ const typeDefs = gql`
     NurseID: ID
     Temperature: Float!
     BPsystolic: Int!
+    heartRate: Int!
     BPdiastolic: Int!
     RespiratoryRate: Int!
     weight: Float!
