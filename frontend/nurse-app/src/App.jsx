@@ -1,4 +1,9 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
 import "./App.css";
 
 // Import components
@@ -55,11 +60,14 @@ const AnalyzePage = () => (
 );
 
 function App({ user }) {
+  console.log("User in App component:", user);
   return (
     <Router>
       <Routes>
-        {/* Protected Routes */}
+        {/* Default route - redirect to vitals */}
+        <Route path="/" element={<Navigate to="/vitals" replace />} />
 
+        {/* Protected Routes */}
         <Route
           path="/vitals"
           element={
