@@ -1,0 +1,25 @@
+{
+  "name": "healthcare-ai-training",
+  "version": "1.0.0",
+  "description": "AI training for healthcare symptom prediction using TensorFlow.js",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "install-ai": "node install.js",
+    "setup": "node setup.js",
+    "train": "node train.js",
+    "predict": "node predict.js",
+    "train:gpu": "node train.js",
+    "train:cpu": "cross-env USE_CPU=true node train.js"
+  },
+  "dependencies": {
+    "@tensorflow/tfjs": "^3.1.0",
+    "@tensorflow/tfjs-node": "^3.1.0",
+    "@tensorflow/tfjs-node-gpu": "^3.1.0",
+    "cross-env": "^7.0.3",
+    "csv-parser": "^3.0.0",
+    "fs-extra": "^11.2.0",
+    "node-fetch": "^3.3.2",
+    "papaparse": "^5.4.1"
+  }
+}

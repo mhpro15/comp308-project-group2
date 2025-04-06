@@ -109,10 +109,8 @@ export const GET_SYMPTOM_RECORDS = gql`
       symptoms
       submissionDate
       aiPrediction {
-        conditions {
-          name
-          confidence
-        }
+        condition
+        probability
         riskLevel
       }
     }
@@ -129,10 +127,8 @@ export const GET_PATIENT_SYMPTOM_RECORDS = gql`
       symptoms
       submissionDate
       aiPrediction {
-        conditions {
-          name
-          confidence
-        }
+        condition
+        probability
         riskLevel
       }
     }
@@ -178,6 +174,29 @@ export const GET_PATIENT_ALERTS = gql`
       }
       description
       timeStamp
+    }
+  }
+`;
+
+export const UPDATE_AI_PREDICTION = gql`
+  mutation UpdateAIPrediction(
+    $id: ID!
+    $condition: String!
+    $probability: Float
+    $riskLevel: String!
+  ) {
+    updateAIPrediction(
+      id: $id
+      condition: $condition
+      probability: $probability
+      riskLevel: $riskLevel
+    ) {
+      id
+      aiPrediction {
+        condition
+        probability
+        riskLevel
+      }
     }
   }
 `;

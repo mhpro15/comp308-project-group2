@@ -1,0 +1,21 @@
+{
+  "symptomFeatures": [
+    "fever",
+    "cough",
+    "shortness_of_breath",
+    "fatigue",
+    "sore_throat",
+    "body_aches",
+    "congestion",
+    "runny_nose"
+  ],
+  "targetCondition": "COVID-19",
+  "severityLevels": [
+    "none",
+    "mild",
+    "moderate",
+    "severe"
+  ],
+  "version": "1.0",
+  "createdAt": "2025-04-06T19:15:00.753Z"
+}
