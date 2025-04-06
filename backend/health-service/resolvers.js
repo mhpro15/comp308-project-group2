@@ -344,6 +344,37 @@ const resolvers = {
 
       return !!result;
     },
+
+    updateAIPrediction: async (
+      _,
+      { id, condition, severity, probability, riskLevel },
+      context
+    ) => {
+      await checkAuth(context, ["nurse"]);
+
+      try {
+        const symptomRecord = await SymptomRecord.findById(id);
+
+        if (!symptomRecord) {
+          throw new Error("Symptom record not found");
+        }
+
+        // Update the AI prediction
+        symptomRecord.aiPrediction = {
+          condition,
+          severity,
+          probability,
+          riskLevel,
+        };
+
+        await symptomRecord.save();
+
+        return symptomRecord.populate("PatientID");
+      } catch (error) {
+        console.error(`Error in updateAIPrediction: ${error.message}`);
+        throw new Error(`Failed to update AI prediction: ${error.message}`);
+      }
+    },
   },
 
   // Field resolvers for relationships

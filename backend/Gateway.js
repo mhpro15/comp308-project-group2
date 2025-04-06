@@ -29,7 +29,6 @@ class AuthenticatedDataSource extends RemoteGraphQLDataSource {
       if (headers.authorization) {
         // Keep the original format with "Bearer" prefix
         request.http.headers.set("Authorization", headers.authorization);
-        console.log(`Forwarding authorization header to ${this.url}`);
       }
 
       // Forward other important headers as needed
@@ -72,12 +71,6 @@ const startServer = async () => {
     const { url } = await startStandaloneServer(server, {
       listen: { port: PORT },
       context: async ({ req }) => {
-        // Log request information for debugging
-        console.log(`Gateway received request: ${req.method} ${req.url}`);
-
-        // Log all headers for debugging
-        console.log("Request headers:", JSON.stringify(req.headers, null, 2));
-
         if (req.headers.authorization) {
           console.log("Request includes authorization token");
         }

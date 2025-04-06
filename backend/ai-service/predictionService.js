@@ -66,14 +66,16 @@ class SymptomPredictionService {
     const MODEL_DIR = path.join(process.cwd(), "models");
     const modelPath = `file://${path.join(
       MODEL_DIR,
-      "symptom_prediction_model"
+      "symptom_prediction_model/model.json"
     )}`;
     const metadataPath = path.join(MODEL_DIR, "model_metadata.json");
 
     try {
+      console.log(`Attempting to load model from: ${modelPath}`);
+
       // Load model
       this.model = await tf.loadLayersModel(modelPath);
-      console.log(`Model loaded from ${modelPath}`);
+      console.log(`Model loaded successfully from ${modelPath}`);
 
       // Load metadata if exists
       if (await fs.pathExists(metadataPath)) {

@@ -165,12 +165,14 @@ export const UPDATE_AI_PREDICTION = gql`
   mutation UpdateAIPrediction(
     $id: ID!
     $condition: String!
+    $severity: String
     $probability: Float
     $riskLevel: String!
   ) {
     updateAIPrediction(
       id: $id
       condition: $condition
+      severity: $severity
       probability: $probability
       riskLevel: $riskLevel
     ) {
@@ -178,18 +180,9 @@ export const UPDATE_AI_PREDICTION = gql`
       aiPrediction {
         condition
         probability
+        severity
         riskLevel
       }
-    }
-  }
-`;
-
-export const ANALYZE_SYMPTOMS = gql`
-  mutation AnalyzeSymptoms($symptoms: [String!]!) {
-    analyzeSymptoms(symptoms: $symptoms) {
-      condition
-      probability
-      riskLevel
     }
   }
 `;
@@ -200,7 +193,8 @@ export const PREDICT_FROM_SYMPTOMS = gql`
       condition
       probability
       severity
-      riskLevel
+      covidPositive
+      error
     }
   }
 `;
@@ -247,5 +241,23 @@ export const GET_ALL_MOTIVATION_CARDS = gql`
 export const DELETE_MOTIVATION_CARD = gql`
   mutation DeleteMotivationCard($id: ID!) {
     deleteMotivationCard(id: $id)
+  }
+`;
+
+export const GET_ALL_HELP_ALERTS = gql`
+  query GetAllHelpAlerts {
+    getAllHelpAlerts {
+      id
+      patientId
+      message
+      viewed
+      createdAt
+    }
+  }
+`;
+
+export const MARK_ALERT_VIEWED = gql`
+  mutation MarkAlertViewed($id: ID!) {
+    markAlertViewed(id: $id)
   }
 `;

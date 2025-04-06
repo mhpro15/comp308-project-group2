@@ -17,14 +17,12 @@ const AnalyzePage = () => {
   const [updateSuccess, setUpdateSuccess] = useState(false);
   const [analysisError, setAnalysisError] = useState(null);
 
-  // Get all patients
   const {
     data: patientsData,
     loading: patientsLoading,
     error: patientsError,
   } = useQuery(GET_PATIENTS);
 
-  // Get patient symptoms when a patient is selected
   const {
     data: symptomsData,
     loading: symptomsLoading,
@@ -35,32 +33,9 @@ const AnalyzePage = () => {
     skip: !selectedPatient,
   });
 
-  // Lazy query for prediction from symptoms
   const [getPrediction, { loading: predictionLoading }] = useLazyQuery(
     PREDICT_FROM_SYMPTOMS,
-    {
-      fetchPolicy: "no-cache", // Don't cache prediction results
-      onCompleted: (data) => {
-        console.log("Prediction completed:", data);
-        if (data && data.predictFromSymptoms) {
-          setAnalysisResult({
-            condition: data.predictFromSymptoms.condition || "COVID-19",
-            probability: data.predictFromSymptoms.probability || 0,
-            riskLevel:
-              data.predictFromSymptoms.riskLevel ||
-              mapSeverityToRiskLevel(data.predictFromSymptoms.severity),
-          });
-        }
-        setIsAnalyzing(false);
-      },
-      onError: (error) => {
-        console.error("Prediction error:", error);
-        setAnalysisError(
-          error.message || "Error getting prediction from AI service"
-        );
-        setIsAnalyzing(false);
-      },
-    }
+    { fetchPolicy: "no-cache" } // Don't cache prediction results
   );
 
   // Update AI prediction mutation
@@ -85,32 +60,6 @@ const AnalyzePage = () => {
     return () => clearTimeout(timer);
   }, [updateSuccess]);
 
-  // Function to analyze symptoms with AI
-  const handleAnalyze = async () => {
-    if (!selectedSymptomRecord) return;
-
-    setIsAnalyzing(true);
-    setAnalysisResult(null);
-    setAnalysisError(null);
-
-    try {
-      // Use the GraphQL query to get prediction
-      getPrediction({
-        variables: {
-          symptoms: selectedSymptomRecord.symptoms,
-        },
-      });
-      // The state is updated in the query callbacks (onCompleted/onError)
-    } catch (error) {
-      console.error("Error analyzing symptoms:", error);
-      setAnalysisError(
-        error.message ||
-          "Error connecting to AI service. Please try again later."
-      );
-      setIsAnalyzing(false);
-    }
-  };
-
   // Helper function to map severity to risk level
   const mapSeverityToRiskLevel = (severity) => {
     switch (severity) {
@@ -127,6 +76,150 @@ const AnalyzePage = () => {
     }
   };
 
+  // Check for authentication token
+  const checkAuthToken = () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      return false;
+    }
+
+    try {
+      // Basic check to see if token is valid JWT format
+      // This doesn't validate the signature, just the format
+      const parts = token.split(".");
+      if (parts.length !== 3) {
+        console.error("Token is not in valid JWT format");
+        return false;
+      }
+
+      // Check if token is expired
+      try {
+        const payload = JSON.parse(atob(parts[1]));
+        if (payload.exp && payload.exp * 1000 < Date.now()) {
+          console.error("Token is expired");
+          return false;
+        }
+      } catch (e) {
+        console.error("Could not parse token payload:", e);
+      }
+
+      return true;
+    } catch (e) {
+      console.error("Error checking token:", e);
+      return false;
+    }
+  };
+
+  // Function to analyze symptoms with AI
+  const handleAnalyze = async () => {
+    if (!selectedSymptomRecord) return;
+
+    // Check token first
+    if (!checkAuthToken()) {
+      setAnalysisError(
+        "Authentication error: You need to be logged in with a valid token to use the AI analysis feature"
+      );
+      return;
+    }
+
+    setIsAnalyzing(true);
+    setAnalysisResult(null);
+    setAnalysisError(null);
+
+    try {
+      console.log("Original symptoms:", selectedSymptomRecord.symptoms);
+
+      // Ensure symptoms match exactly what the backend expects
+      // Valid symptoms: fever, cough, shortness_of_breath, fatigue, sore_throat, body_aches, congestion, runny_nose
+      const validSymptomMap = {
+        fever: "fever",
+        cough: "cough",
+        "shortness of breath": "shortness_of_breath",
+        fatigue: "fatigue",
+        "sore throat": "sore_throat",
+        "body aches": "body_aches",
+        congestion: "congestion",
+        "runny nose": "runny_nose",
+      };
+
+      const formattedSymptoms = selectedSymptomRecord.symptoms.map(
+        (symptom) => {
+          // Convert to lowercase and remove extra spaces
+          const normalized = symptom.toLowerCase().trim();
+
+          // Replace spaces with underscores if needed
+          if (validSymptomMap[normalized]) {
+            return validSymptomMap[normalized];
+          }
+
+          // If not in our map, use as is (after replacing spaces)
+          return normalized.replace(/\s+/g, "_");
+        }
+      );
+
+      console.log("Formatted symptoms for API:", formattedSymptoms);
+
+      // Use the query to get prediction
+      const { data, error } = await getPrediction({
+        variables: {
+          symptoms: formattedSymptoms,
+        },
+      });
+
+      if (error) {
+        throw error;
+      }
+
+      if (data && data.predictFromSymptoms) {
+        // Check if there was an error in the response
+        if (data.predictFromSymptoms.error) {
+          setAnalysisError(data.predictFromSymptoms.error);
+          return;
+        }
+
+        // Always calculate riskLevel from severity since it's not in the API response
+        const severity = data.predictFromSymptoms.severity || "unknown";
+
+        setAnalysisResult({
+          condition: data.predictFromSymptoms.condition || "COVID-19",
+          probability: data.predictFromSymptoms.probability || 0,
+          severity: severity,
+          riskLevel: mapSeverityToRiskLevel(severity),
+        });
+      }
+    } catch (error) {
+      console.error("Error analyzing symptoms:", error);
+
+      // Extract the most useful error message
+      let errorMessage = "Error analyzing symptoms with AI service";
+
+      if (error.networkError) {
+        console.error("Network error details:", error.networkError);
+        errorMessage = `Network error: ${
+          error.networkError.statusCode || ""
+        } - Unable to connect to AI service`;
+
+        // Log response body if available
+        if (error.networkError.result) {
+          console.error("Error response:", error.networkError.result);
+        }
+      } else if (error.graphQLErrors && error.graphQLErrors.length > 0) {
+        console.error("GraphQL Errors:", error.graphQLErrors);
+        errorMessage = `GraphQL error: ${error.graphQLErrors[0].message}`;
+
+        // Log the path and locations if available
+        const firstError = error.graphQLErrors[0];
+        if (firstError.path) {
+          console.error("Error path:", firstError.path);
+        }
+      }
+
+      setAnalysisError(errorMessage);
+    } finally {
+      setIsAnalyzing(false);
+    }
+  };
+
   // Function to update the symptom record with AI prediction
   const handleUpdatePrediction = async () => {
     if (!selectedSymptomRecord || !analysisResult) return;
@@ -134,12 +227,15 @@ const AnalyzePage = () => {
     setIsUpdating(true);
 
     try {
+      console.log("Updating prediction:", analysisResult);
       await updateAIPrediction({
         variables: {
+          symptoms: selectedSymptomRecord.symptoms,
           id: selectedSymptomRecord.id,
           condition: analysisResult.condition,
           probability: analysisResult.probability,
-          riskLevel: analysisResult.riskLevel,
+          severity: analysisResult.severity || "unknown",
+          riskLevel: analysisResult.riskLevel || "unknown",
         },
       });
 
@@ -325,7 +421,7 @@ const AnalyzePage = () => {
                     Updating...
                   </>
                 ) : (
-                  "Update Prediction"
+                  "Update Record"
                 )}
               </button>
             )}
@@ -358,6 +454,14 @@ const AnalyzePage = () => {
                   <span className="font-semibold">Probability:</span>{" "}
                   {Math.round(analysisResult.probability * 100)}%
                 </div>
+                {analysisResult.severity && (
+                  <div>
+                    <span className="font-semibold">Severity:</span>{" "}
+                    <span className="capitalize">
+                      {analysisResult.severity}
+                    </span>
+                  </div>
+                )}
                 <div>
                   <span className="font-semibold">Risk Level:</span>{" "}
                   <span
