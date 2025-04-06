@@ -1,6 +1,10 @@
 import { ApolloServer } from "@apollo/server";
 import { startStandaloneServer } from "@apollo/server/standalone";
-import { ApolloGateway, IntrospectAndCompose } from "@apollo/gateway";
+import {
+  ApolloGateway,
+  IntrospectAndCompose,
+  RemoteGraphQLDataSource,
+} from "@apollo/gateway";
 import dotenv from "dotenv";
 
 // Load environment variables
@@ -14,6 +18,32 @@ const HEALTH_SERVICE_URL =
 const AI_SERVICE_URL =
   process.env.AI_SERVICE_URL || "http://localhost:4003/graphql";
 
+// Create custom data source class that properly forwards headers
+class AuthenticatedDataSource extends RemoteGraphQLDataSource {
+  willSendRequest({ request, context }) {
+    // Copy all headers from the client request to the service request
+    if (context && context.headers) {
+      const headers = context.headers;
+
+      // Add authorization header if it exists
+      if (headers.authorization) {
+        // Keep the original format with "Bearer" prefix
+        request.http.headers.set("Authorization", headers.authorization);
+        console.log(`Forwarding authorization header to ${this.url}`);
+      }
+
+      // Forward other important headers as needed
+      if (headers["content-type"]) {
+        request.http.headers.set("Content-Type", headers["content-type"]);
+      }
+
+      if (headers["user-agent"]) {
+        request.http.headers.set("User-Agent", headers["user-agent"]);
+      }
+    }
+  }
+}
+
 // Configure the gateway
 const gateway = new ApolloGateway({
   supergraphSdl: new IntrospectAndCompose({
@@ -23,6 +53,9 @@ const gateway = new ApolloGateway({
     ],
     pollIntervalInMs: 30000, // Check for updates every 30 seconds
   }),
+  buildService({ url }) {
+    return new AuthenticatedDataSource({ url });
+  },
   debug: true, // Enable debug mode for more detailed logs
   logger: console, // Use console for logging
 });
@@ -30,7 +63,6 @@ const gateway = new ApolloGateway({
 // Create Apollo Server instance
 const server = new ApolloServer({
   gateway,
-  // Forward the authentication header to the subgraphs
   introspection: true,
 });
 
@@ -40,20 +72,19 @@ const startServer = async () => {
     const { url } = await startStandaloneServer(server, {
       listen: { port: PORT },
       context: async ({ req }) => {
-        // Pass the authorization header to the subgraphs
-        const token = req.headers.authorization || "";
-
-        // Track response times and errors for debugging
+        // Log request information for debugging
         console.log(`Gateway received request: ${req.method} ${req.url}`);
-        if (token) {
+
+        // Log all headers for debugging
+        console.log("Request headers:", JSON.stringify(req.headers, null, 2));
+
+        if (req.headers.authorization) {
           console.log("Request includes authorization token");
         }
 
+        // Return the full headers object to be used by AuthenticatedDataSource
         return {
-          headers: {
-            ...req.headers,
-            authorization: token,
-          },
+          headers: req.headers,
         };
       },
     });
@@ -67,10 +98,7 @@ const startServer = async () => {
         listen: { port: FALLBACK_PORT },
         context: ({ req }) => {
           return {
-            headers: {
-              ...req.headers,
-              authorization: req.headers.authorization || "",
-            },
+            headers: req.headers,
           };
         },
       });

@@ -30,7 +30,25 @@ const PORT = process.env.PORT || 4003;
 
 // Authentication middleware
 const authMiddleware = async (req, res, next) => {
-  const token = req.headers.authorization?.split("Bearer ")[1];
+  // Extract token from Authorization header
+  // Handle both "Bearer token" and just "token" formats
+  const authHeader = req.headers.authorization;
+  let token = null;
+
+  if (authHeader) {
+    // Check if it's in "Bearer token" format
+    if (authHeader.startsWith("Bearer ")) {
+      token = authHeader.substring(7); // Remove "Bearer " prefix
+    } else {
+      token = authHeader; // Use the token as is
+    }
+  }
+
+  console.log("AI Service - Auth header:", authHeader);
+  console.log(
+    "AI Service - Extracted token:",
+    token ? "Token found" : "No token"
+  );
 
   if (!token) {
     req.isAuthenticated = false;
@@ -41,8 +59,9 @@ const authMiddleware = async (req, res, next) => {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     req.user = decoded;
     req.isAuthenticated = true;
+    console.log("AI Service - Authentication successful for user:", decoded.id);
   } catch (err) {
-    console.warn("Invalid token:", err.message);
+    console.warn("AI Service - Invalid token:", err.message);
     req.isAuthenticated = false;
   }
 
@@ -87,10 +106,17 @@ async function startServer() {
     "/graphql",
     expressMiddleware(server, {
       context: async ({ req }) => {
+        // Log request headers for debugging
+        console.log(
+          "AI Service GraphQL request headers:",
+          JSON.stringify(req.headers, null, 2)
+        );
+
         return {
           headers: req.headers,
           user: req.user,
           isAuthenticated: req.isAuthenticated,
+          token: req.headers.authorization,
         };
       },
     })
