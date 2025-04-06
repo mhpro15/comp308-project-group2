@@ -82,23 +82,6 @@ export const GET_PATIENT_VITAL_SIGNS = gql`
   }
 `;
 
-export const CREATE_MOTIVATIONAL_TIP = gql`
-  mutation CreateMotivation($input: MotivationInput!) {
-    createMotivation(input: $input) {
-      id
-      PatientID {
-        id
-      }
-      NurseID {
-        id
-      }
-      title
-      content
-      timeStamp
-    }
-  }
-`;
-
 export const GET_SYMPTOM_RECORDS = gql`
   query GetSymptomRecord($getSymptomRecordId: ID!) {
     getSymptomRecord(id: $getSymptomRecordId) {
@@ -238,5 +221,31 @@ export const SUBMIT_SYMPTOMS = gql`
         riskLevel
       }
     }
+  }
+`;
+
+export const CREATE_MOTIVATION_CARD = gql`
+  mutation CreateMotivationCard($topic: String!, $message: String!) {
+    createMotivationCard(topic: $topic, message: $message) {
+      id
+      topic
+      message
+    }
+  }
+`;
+
+export const GET_ALL_MOTIVATION_CARDS = gql`
+  query GetAllMotivationCards {
+    getAllMotivationCards {
+      id
+      topic
+      message
+    }
+  }
+`;
+
+export const DELETE_MOTIVATION_CARD = gql`
+  mutation DeleteMotivationCard($id: ID!) {
+    deleteMotivationCard(id: $id)
   }
 `;

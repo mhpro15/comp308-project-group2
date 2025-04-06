@@ -178,10 +178,6 @@ const typeDefs = gql`
     #alert
     sendHelpAlert(patientId: ID!, message: String): HelpAlert!
     markAlertViewed(id: ID!): Boolean!
-
-    # Relationship mutations
-    assignNurseToPatient(patientID: ID!, nurseID: ID!): User!
-    unassignNurseFromPatient(patientID: ID!): User!
   }
 `;
 

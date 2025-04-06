@@ -225,34 +225,6 @@ const resolvers = {
       }
     },
 
-<<<<<<< HEAD:backend/user-portal/resolvers.js
-=======
-    // Alert Mutations
-
-    createAlert: async (_, { input }) => {
-      const newAlert = new Alert({
-        user: input.user,
-        description: input.description,
-      });
-
-      await newAlert.save();
-      return newAlert.populate("user");
-    },
-    resolveAlert: async (_, { id }) => {
-      try {
-        const deletedAlert = await Alert.findByIdAndDelete(id);
-        if (!deletedAlert) {
-          throw new Error("Alert not found");
-        }
-        return deletedAlert;
-      } catch (error) {
-        throw new Error("Failed to delete alert: " + error.message);
-      }
-    },
->>>>>>> 8a64d8f72fbf2fa82352ebf004b1bb66a40af901:backend/health-service/resolvers.js
-    // ----------------------------
-    // Motivation mutations
-    // ----------------------------
     createMotivationCard: async (_, { topic, message }) => {
       try {
         const newCard = new MotivationCard({ Topic: topic, message });

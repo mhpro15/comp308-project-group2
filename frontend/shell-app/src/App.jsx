@@ -16,7 +16,7 @@ function App() {
           {user?.role === "nurse" && (
             <div
               style={{
-                height: "100vh",
+                minHeight: "100vh",
                 width: "100vw",
                 overflow: "hidden",
                 position: "absolute",

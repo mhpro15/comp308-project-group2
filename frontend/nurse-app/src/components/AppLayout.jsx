@@ -25,7 +25,7 @@ const AppLayout = ({ children }) => {
   };
 
   return (
-    <div className="md:flex h-screen bg-gray-100 w-screen">
+    <div className="md:flex min-h-screen bg-gray-100 w-screen">
       {/* Sidebar */}
       <aside
         className={`fixed flex-1/3 md:relative h-full max-w-[400px] bg-white shadow-lg transform transition-transform duration-300 ease-in-out ${
