@@ -1,6 +1,10 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import "./App.css";
 
+//test
+import HelpAlerts from "./components/HelpAlerts";
+import MotivationCards from "./components/MotivationCards";
+
 // Import components
 import AppLayout from "./components/AppLayout";
 import VitalSigns from "./pages/VitalSigns";
@@ -57,6 +61,8 @@ const AnalyzePage = () => (
 function App({ user }) {
   return (
     <Router>
+      <HelpAlerts />
+      <MotivationCards />
       <Routes>
         {/* Protected Routes */}
 

@@ -60,25 +60,18 @@ const typeDefs = gql`
     timeStamp: DateTime!
   }
 
-  input MotivationInput {
-    PatientID: ID!
-    NurseID: ID!
-    title: String!
-    content: String!
-    timeStamp: DateTime
-  }
-
-  type Alert {
+  type MotivationCard {
     id: ID!
-    user: User!
-    description: String!
-    timeStamp: DateTime!
+    topic: String!
+    message: String!
   }
 
-  input AlertInput {
-    user: ID!
-    description: String!
-    timeStamp: DateTime
+  type HelpAlert {
+    id: ID!
+    patientId: ID!
+    message: String
+    viewed: Boolean!
+    createdAt: DateTime!
   }
 
   enum Symptom {
@@ -142,13 +135,11 @@ const typeDefs = gql`
     getPatientSymptoms(PatientID: ID!): [SymptomRecord!]!
 
     # Alert queries
-    getAlert(id: ID!): Alert
-    getUserAlerts(userID: ID!): [Alert!]!
+    getAllHelpAlerts: [HelpAlert!]!
 
-    # Motivation queries
-    getMotivation(id: ID!): Motivation
-    motivationsByPatient(patientId: ID!): [Motivation!]!
-    getNurseMotivations(NurseID: ID!): [Motivation!]!
+    # Motivation and alerts queries
+    getMotivationCard: MotivationCard!
+    getAllMotivationCards: [MotivationCard!]!
   }
 
   # Mutations
@@ -172,14 +163,13 @@ const typeDefs = gql`
       riskLevel: String!
     ): SymptomRecord!
 
-    # Alert mutations
-    createAlert(input: AlertInput!): Alert!
-    resolveAlert(id: ID!): Alert!
-
     # Motivation mutations
-    createMotivation(input: MotivationInput!): Motivation!
-    updateMotivation(id: ID!, content: String!): Motivation!
-    deleteMotivation(id: ID!): Boolean!
+    createMotivationCard(topic: String!, message: String!): MotivationCard!
+    deleteMotivationCard(id: ID!): Boolean!
+
+    #alert
+    sendHelpAlert(patientId: ID!, message: String): HelpAlert!
+    markAlertViewed(id: ID!): Boolean!
 
     # Relationship mutations
     assignNurseToPatient(patientID: ID!, nurseID: ID!): User!
