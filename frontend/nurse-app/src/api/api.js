@@ -200,3 +200,43 @@ export const UPDATE_AI_PREDICTION = gql`
     }
   }
 `;
+
+export const ANALYZE_SYMPTOMS = gql`
+  mutation AnalyzeSymptoms($symptoms: [String!]!) {
+    analyzeSymptoms(symptoms: $symptoms) {
+      condition
+      probability
+      riskLevel
+    }
+  }
+`;
+
+export const PREDICT_FROM_SYMPTOMS = gql`
+  query PredictFromSymptoms($symptoms: [String]!) {
+    predictFromSymptoms(symptoms: $symptoms) {
+      condition
+      probability
+      severity
+      riskLevel
+    }
+  }
+`;
+
+export const SUBMIT_SYMPTOMS = gql`
+  mutation SubmitSymptoms($input: SymptomInput!) {
+    submitSymptoms(input: $input) {
+      id
+      symptoms
+      submissionDate
+      PatientID {
+        id
+        name
+      }
+      aiPrediction {
+        condition
+        probability
+        riskLevel
+      }
+    }
+  }
+`;

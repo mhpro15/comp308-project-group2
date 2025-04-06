@@ -10,6 +10,8 @@ import "./App.css";
 import AppLayout from "./components/AppLayout";
 import VitalSigns from "./pages/VitalSigns";
 import MotivationalTipsPage from "./pages/MotivationalTipsPage";
+import SymptomsPage from "./pages/SymptomsPage";
+import AnalyzePage from "./pages/AnalyzePage";
 
 const EmergencyPage = () => (
   <div>
@@ -22,38 +24,6 @@ const EmergencyPage = () => (
       </div>
       <div className="card-body">
         <p>Track and respond to emergency alerts from patients.</p>
-      </div>
-    </div>
-  </div>
-);
-
-const SymptomsPage = () => (
-  <div>
-    <div className="page-header">
-      <h1 className="page-title">Symptom Reports</h1>
-    </div>
-    <div className="card">
-      <div className="card-header">
-        <h2 className="card-title">Patient Reported Symptoms</h2>
-      </div>
-      <div className="card-body">
-        <p>Review symptoms reported by patients.</p>
-      </div>
-    </div>
-  </div>
-);
-
-const AnalyzePage = () => (
-  <div>
-    <div className="page-header">
-      <h1 className="page-title">Data Analysis</h1>
-    </div>
-    <div className="card">
-      <div className="card-header">
-        <h2 className="card-title">Patient Data Analysis</h2>
-      </div>
-      <div className="card-body">
-        <p>Analyze patient health data and trends.</p>
       </div>
     </div>
   </div>
@@ -88,7 +58,7 @@ function App({ user }) {
           path="/symptoms"
           element={
             <AppLayout>
-              <SymptomsPage />
+              <SymptomsPage currentUser={user} />
             </AppLayout>
           }
         />
