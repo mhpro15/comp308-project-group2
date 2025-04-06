@@ -6,6 +6,10 @@ import {
 } from "react-router-dom";
 import "./App.css";
 
+//test
+import HelpAlerts from "./components/HelpAlerts";
+import MotivationCards from "./components/MotivationCards";
+
 // Import components
 import AppLayout from "./components/AppLayout";
 import VitalSigns from "./pages/VitalSigns";
@@ -33,6 +37,8 @@ function App({ user }) {
   console.log("User in App component:", user);
   return (
     <Router>
+      <HelpAlerts />
+      <MotivationCards />
       <Routes>
         {/* Default route - redirect to vitals */}
         <Route path="/" element={<Navigate to="/vitals" replace />} />

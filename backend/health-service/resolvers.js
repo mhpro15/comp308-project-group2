@@ -3,8 +3,9 @@ const jwt = require("jsonwebtoken");
 const { AuthenticationError } = require("apollo-server-express");
 const User = require("./models/User");
 const VitalSigns = require("./models/VitalSigns");
-const Alert = require("./models/EmergencyAlert");
-const Motivation = require("./models/Motivation");
+const MotivationCard = require("./models/MotivationCard.js");
+const HelpAlert = require("./models/HelpAlert.js");
+
 const SymptomRecord = require("./models/SymptomRecord");
 require("dotenv").config();
 // Configuration
@@ -43,6 +44,16 @@ const resolvers = {
       return VitalSigns.findById(id).populate("PatientID NurseID");
     },
 
+    getMotivationCard: async () => {
+      const latest = await MotivationCard.findOne().sort({ _id: -1 });
+      if (!latest) return null;
+      return {
+        id: latest._id.toString(),
+        topic: latest.Topic,
+        message: latest.message,
+      };
+    },
+
     // Get vital signs for a specific patient
     getPatientVitalSigns: async (_, { PatientID }, context) => {
       await checkAuth(context);
@@ -65,19 +76,21 @@ const resolvers = {
         .sort({ submissionDate: -1 });
     },
 
-    motivationsByPatient: async (_, { patientId }, { user }) => {
-      if (!user || (user.role !== "patient" && user.role !== "nurse")) {
-        throw new Error("Unauthorized access");
+    getAllMotivationCards: async () => {
+      try {
+        const cards = await MotivationCard.find().sort({ _id: -1 });
+        return cards.map((card) => ({
+          id: card._id.toString(),
+          topic: card.Topic,
+          message: card.message,
+        }));
+      } catch (err) {
+        throw new Error("Failed to fetch motivation cards: " + err.message);
       }
+    },
 
-      // Optionally, restrict patient to only their own data
-      if (user.role === "patient" && user.id !== patientId) {
-        throw new Error("Access denied");
-      }
-
-      return await Motivation.find({ PatientID: patientId }).populate(
-        "PatientID NurseID"
-      );
+    getAllHelpAlerts: async () => {
+      return await HelpAlert.find().sort({ createdAt: -1 });
     },
   },
 
@@ -212,6 +225,8 @@ const resolvers = {
       }
     },
 
+<<<<<<< HEAD:backend/user-portal/resolvers.js
+=======
     // Alert Mutations
 
     createAlert: async (_, { input }) => {
@@ -234,63 +249,43 @@ const resolvers = {
         throw new Error("Failed to delete alert: " + error.message);
       }
     },
+>>>>>>> 8a64d8f72fbf2fa82352ebf004b1bb66a40af901:backend/health-service/resolvers.js
     // ----------------------------
     // Motivation mutations
     // ----------------------------
-    createMotivation: async (_, { input }, { user }) => {
-      if (!user || user.role !== "nurse" || user.id !== input.NurseID) {
-        throw new Error("Unauthorized - only nurses can create motivations");
+    createMotivationCard: async (_, { topic, message }) => {
+      try {
+        const newCard = new MotivationCard({ Topic: topic, message });
+        const saved = await newCard.save();
+        return {
+          id: saved._id.toString(),
+          topic: saved.Topic,
+          message: saved.message,
+        };
+      } catch (error) {
+        throw new Error("Failed to create motivation card: " + error.message);
       }
-
-      const newMotivation = new Motivation({
-        PatientID: input.PatientID,
-        NurseID: user.id,
-        title: input.title,
-        content: input.content,
-        timeStamp: input.timeStamp || Date.now(),
-      });
-
-      await newMotivation.save();
-      // Fix: Change from array syntax to string syntax for populate
-      return newMotivation.populate("PatientID NurseID");
     },
 
-    updateMotivation: async (_, { id, content }, { user }) => {
-      const motivation = await Motivation.findById(id);
-      if (!motivation) {
-        throw new Error("Motivation not found");
-      }
-
-      if (
-        !user ||
-        user.role !== "nurse" ||
-        user.id !== motivation.NurseID.toString()
-      ) {
-        throw new Error("Unauthorized - only the creating nurse can update");
-      }
-
-      motivation.content = content;
-      await motivation.save();
-      return motivation.populate("PatientID NurseID");
+    sendHelpAlert: async (_, { patientId, message }) => {
+      const newAlert = new HelpAlert({ patientId, message });
+      return await newAlert.save();
     },
 
-    deleteMotivation: async (_, { id }, { user }) => {
-      const motivation = await Motivation.findById(id);
-      if (!motivation) {
-        throw new Error("Motivation not found");
+    deleteMotivationCard: async (_, { id }) => {
+      try {
+        const result = await MotivationCard.findByIdAndDelete(id);
+        return !!result;
+      } catch (error) {
+        throw new Error("Failed to delete card: " + error.message);
       }
-
-      if (
-        !user ||
-        user.role !== "nurse" ||
-        user.id !== motivation.NurseID.toString()
-      ) {
-        throw new Error("Unauthorized - only the creating nurse can delete");
-      }
-
-      await Motivation.findByIdAndDelete(id);
-      return true;
     },
+
+    markAlertViewed: async (_, { id }) => {
+      const updated = await HelpAlert.findByIdAndUpdate(id, { viewed: true });
+      return !!updated;
+    },
+
     //------------------------------
     // Vital Signs mutations
     //--------------------------------
