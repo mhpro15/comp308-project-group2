@@ -16,29 +16,14 @@ import VitalSigns from "./pages/VitalSigns";
 import MotivationalTipsPage from "./pages/MotivationalTipsPage";
 import SymptomsPage from "./pages/SymptomsPage";
 import AnalyzePage from "./pages/AnalyzePage";
-
-const EmergencyPage = () => (
-  <div>
-    <div className="page-header">
-      <h1 className="page-title">Emergency Alerts</h1>
-    </div>
-    <div className="card">
-      <div className="card-header">
-        <h2 className="card-title">Emergency Response System</h2>
-      </div>
-      <div className="card-body">
-        <p>Track and respond to emergency alerts from patients.</p>
-      </div>
-    </div>
-  </div>
-);
+import EmergencyAlertsPage from "./pages/EmergencyAlertsPage";
 
 function App({ user }) {
   console.log("User in App component:", user);
   return (
     <Router>
-      <HelpAlerts />
-      <MotivationCards />
+      {/* <HelpAlerts />
+      <MotivationCards /> */}
       <Routes>
         {/* Default route - redirect to vitals */}
         <Route path="/" element={<Navigate to="/vitals" replace />} />
@@ -56,7 +41,7 @@ function App({ user }) {
           path="/emergency"
           element={
             <AppLayout>
-              <EmergencyPage />
+              <EmergencyAlertsPage currentUser={user} />
             </AppLayout>
           }
         />
@@ -64,7 +49,7 @@ function App({ user }) {
           path="/symptoms"
           element={
             <AppLayout>
-              <SymptomsPage currentUser={user} />
+              <SymptomsPage />
             </AppLayout>
           }
         />

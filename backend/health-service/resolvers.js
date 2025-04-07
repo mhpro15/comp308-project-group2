@@ -225,34 +225,6 @@ const resolvers = {
       }
     },
 
-<<<<<<< HEAD:backend/user-portal/resolvers.js
-=======
-    // Alert Mutations
-
-    createAlert: async (_, { input }) => {
-      const newAlert = new Alert({
-        user: input.user,
-        description: input.description,
-      });
-
-      await newAlert.save();
-      return newAlert.populate("user");
-    },
-    resolveAlert: async (_, { id }) => {
-      try {
-        const deletedAlert = await Alert.findByIdAndDelete(id);
-        if (!deletedAlert) {
-          throw new Error("Alert not found");
-        }
-        return deletedAlert;
-      } catch (error) {
-        throw new Error("Failed to delete alert: " + error.message);
-      }
-    },
->>>>>>> 8a64d8f72fbf2fa82352ebf004b1bb66a40af901:backend/health-service/resolvers.js
-    // ----------------------------
-    // Motivation mutations
-    // ----------------------------
     createMotivationCard: async (_, { topic, message }) => {
       try {
         const newCard = new MotivationCard({ Topic: topic, message });
@@ -371,6 +343,37 @@ const resolvers = {
       }
 
       return !!result;
+    },
+
+    updateAIPrediction: async (
+      _,
+      { id, condition, severity, probability, riskLevel },
+      context
+    ) => {
+      await checkAuth(context, ["nurse"]);
+
+      try {
+        const symptomRecord = await SymptomRecord.findById(id);
+
+        if (!symptomRecord) {
+          throw new Error("Symptom record not found");
+        }
+
+        // Update the AI prediction
+        symptomRecord.aiPrediction = {
+          condition,
+          severity,
+          probability,
+          riskLevel,
+        };
+
+        await symptomRecord.save();
+
+        return symptomRecord.populate("PatientID");
+      } catch (error) {
+        console.error(`Error in updateAIPrediction: ${error.message}`);
+        throw new Error(`Failed to update AI prediction: ${error.message}`);
+      }
     },
   },
 

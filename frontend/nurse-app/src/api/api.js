@@ -82,23 +82,6 @@ export const GET_PATIENT_VITAL_SIGNS = gql`
   }
 `;
 
-export const CREATE_MOTIVATIONAL_TIP = gql`
-  mutation CreateMotivation($input: MotivationInput!) {
-    createMotivation(input: $input) {
-      id
-      PatientID {
-        id
-      }
-      NurseID {
-        id
-      }
-      title
-      content
-      timeStamp
-    }
-  }
-`;
-
 export const GET_SYMPTOM_RECORDS = gql`
   query GetSymptomRecord($getSymptomRecordId: ID!) {
     getSymptomRecord(id: $getSymptomRecordId) {
@@ -182,12 +165,14 @@ export const UPDATE_AI_PREDICTION = gql`
   mutation UpdateAIPrediction(
     $id: ID!
     $condition: String!
+    $severity: String
     $probability: Float
     $riskLevel: String!
   ) {
     updateAIPrediction(
       id: $id
       condition: $condition
+      severity: $severity
       probability: $probability
       riskLevel: $riskLevel
     ) {
@@ -195,18 +180,9 @@ export const UPDATE_AI_PREDICTION = gql`
       aiPrediction {
         condition
         probability
+        severity
         riskLevel
       }
-    }
-  }
-`;
-
-export const ANALYZE_SYMPTOMS = gql`
-  mutation AnalyzeSymptoms($symptoms: [String!]!) {
-    analyzeSymptoms(symptoms: $symptoms) {
-      condition
-      probability
-      riskLevel
     }
   }
 `;
@@ -217,7 +193,8 @@ export const PREDICT_FROM_SYMPTOMS = gql`
       condition
       probability
       severity
-      riskLevel
+      covidPositive
+      error
     }
   }
 `;
@@ -238,5 +215,49 @@ export const SUBMIT_SYMPTOMS = gql`
         riskLevel
       }
     }
+  }
+`;
+
+export const CREATE_MOTIVATION_CARD = gql`
+  mutation CreateMotivationCard($topic: String!, $message: String!) {
+    createMotivationCard(topic: $topic, message: $message) {
+      id
+      topic
+      message
+    }
+  }
+`;
+
+export const GET_ALL_MOTIVATION_CARDS = gql`
+  query GetAllMotivationCards {
+    getAllMotivationCards {
+      id
+      topic
+      message
+    }
+  }
+`;
+
+export const DELETE_MOTIVATION_CARD = gql`
+  mutation DeleteMotivationCard($id: ID!) {
+    deleteMotivationCard(id: $id)
+  }
+`;
+
+export const GET_ALL_HELP_ALERTS = gql`
+  query GetAllHelpAlerts {
+    getAllHelpAlerts {
+      id
+      patientId
+      message
+      viewed
+      createdAt
+    }
+  }
+`;
+
+export const MARK_ALERT_VIEWED = gql`
+  mutation MarkAlertViewed($id: ID!) {
+    markAlertViewed(id: $id)
   }
 `;

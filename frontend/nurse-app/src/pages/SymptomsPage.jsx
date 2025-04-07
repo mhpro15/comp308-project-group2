@@ -3,7 +3,7 @@ import { useQuery } from "@apollo/client";
 import { GET_PATIENTS } from "../api/api";
 import SymptomsHistory from "../components/SymptomsHistory";
 
-const SymptomsPage = ({ currentUser }) => {
+const SymptomsPage = () => {
   const [activeTab, setActiveTab] = useState("history");
   const [selectedPatient, setSelectedPatient] = useState("");
   const { data, loading, error } = useQuery(GET_PATIENTS);

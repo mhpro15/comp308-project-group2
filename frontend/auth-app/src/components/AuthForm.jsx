@@ -91,11 +91,15 @@ export default function AuthForm({ onAuthSuccess, onUserChange }) {
           },
         });
         localStorage.setItem("token", data.register.token);
-        localStorage.setItem("userId", data.register.user.id);
+        localStorage.setItem("user", JSON.stringify(data.register.user));
 
         if (onAuthSuccess) {
           onAuthSuccess({ id: data.register.user.id });
         }
+        if (onUserChange) {
+          onUserChange(data.register.user); // Set user state in parent component
+        }
+        setUser(data.register.user);
 
         alert(
           `Welcome, ${data.register.user.name}! Your account has been created.`
