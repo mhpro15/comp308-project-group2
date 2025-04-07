@@ -127,10 +127,6 @@ const VitalSignsHistory = ({ user }) => {
               />
               {isRefetching ? "Refreshing..." : "Refresh"}
             </button>
-            <button className="border rounded px-3 py-1 hidden md:flex items-center gap-1">
-              <FileDown className="h-4 w-4" />
-              Export
-            </button>
           </div>
         </div>
       </div>
