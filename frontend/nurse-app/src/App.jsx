@@ -22,8 +22,8 @@ function App({ user }) {
   console.log("User in App component:", user);
   return (
     <Router>
-      <HelpAlerts />
-      <MotivationCards />
+      {/* <HelpAlerts />
+      <MotivationCards /> */}
       <Routes>
         {/* Default route - redirect to vitals */}
         <Route path="/" element={<Navigate to="/vitals" replace />} />
