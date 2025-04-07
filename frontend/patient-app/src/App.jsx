@@ -1,12 +1,9 @@
-import "./App.css";
-import MotivationCard from "./components/MotivationCard";
-import SendHelpAlert from "./components/SendHelpAlert";
+import PatientDashboard from "./components/PatientDashboard";
 
 function App() {
   return (
     <>
-      <MotivationCard />
-      <SendHelpAlert />
+      <PatientDashboard />
     </>
   );
 }

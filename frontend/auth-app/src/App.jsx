@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import "./App.css";
 import AuthForm from "./components/AuthForm";
 import LogoutButton from "./components/LogoutButton";
 
@@ -32,18 +31,8 @@ function App({ onUserChange }) {
   };
 
   return (
-    <div className="App">
-      {isAuthenticated ? (
-        <>
-          <h1>Welcome to the App!</h1>
-          <LogoutButton onLogout={handleLogout} />
-        </>
-      ) : (
-        <AuthForm
-          onAuthSuccess={handleAuthSuccess}
-          onUserChange={onUserChange}
-        />
-      )}
+    <div>
+      <h1> app jsx </h1>
     </div>
   );
 }

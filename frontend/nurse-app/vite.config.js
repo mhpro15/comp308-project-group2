@@ -20,6 +20,7 @@ export default defineConfig({
   build: {
     modulePreload: false,
     target: "esnext",
+    outDir: "dist",
     minify: false,
     cssCodeSplit: false,
   },
