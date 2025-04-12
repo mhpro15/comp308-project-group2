@@ -93,7 +93,7 @@ const typeDefs = gql`
   }
 
   type AIPrediction {
-    condition: String! # Only value is "COVID-19"
+    condition: String #
     probability: Float
     severity: String # allowed values: "none", "mild", "moderate", "severe", "unknown"
     riskLevel: String # allowed values: "low", "medium", "high", "unknown"
@@ -113,7 +113,7 @@ const typeDefs = gql`
   }
 
   input AIPredictionInput {
-    condition: String!
+    condition: String
     probability: Float
     riskLevel: String
   }

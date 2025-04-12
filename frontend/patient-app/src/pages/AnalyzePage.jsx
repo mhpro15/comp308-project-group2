@@ -279,7 +279,9 @@ const AnalyzePage = () => {
         {patientsLoading ? (
           <div className="animate-spin h-5 w-5 border-2 border-blue-500 rounded-full border-t-transparent"></div>
         ) : patientsError ? (
-          <div className="text-red-500">Only Nurses has access to analysis!</div>
+          <div className="text-red-500">
+            Only Nurses has access to analysis!
+          </div>
         ) : (
           <select
             id="patientSelect"
@@ -451,7 +453,7 @@ const AnalyzePage = () => {
                   {analysisResult.condition}
                 </div>
                 <div>
-                  <span className="font-semibold">Probability:</span>{" "}
+                  <span className="font-semibold">Confidence:</span>{" "}
                   {Math.round(analysisResult.probability * 100)}%
                 </div>
                 {analysisResult.severity && (
