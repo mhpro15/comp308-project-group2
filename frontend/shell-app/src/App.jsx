@@ -3,6 +3,7 @@ import "./App.css";
 //
 const AuthComponent = lazy(() => import("authApp/AuthComponent"));
 const NurseApp = lazy(() => import("nurseApp/NurseAppComponent"));
+const PatientApp = lazy(() => import("patientApp/PatientAppComponent"))
 //
 function App() {
   const [user, setUser] = React.useState(null);
@@ -25,6 +26,20 @@ function App() {
               }}
             >
               <NurseApp user={user} />
+            </div>
+          )}
+          {user?.role === "patient" && (
+            <div
+              style={{
+                minHeight: "100vh",
+                width: "100vw",
+                overflow: "hidden",
+                position: "absolute",
+                top: 50,
+                left: 0,
+              }}
+            >
+              <PatientApp user={user} />
             </div>
           )}
         </Suspense>
