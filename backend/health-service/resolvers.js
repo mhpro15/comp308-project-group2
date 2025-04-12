@@ -196,24 +196,24 @@ const resolvers = {
         // Get AI prediction using our local service
         let aiPrediction = null;
 
-        try {
-          console.log(
-            `Generating AI prediction for symptoms: ${input.symptoms.join(
-              ", "
-            )}`
-          );
-          aiPrediction = await aiService.predictCondition(input.symptoms);
-        } catch (error) {
-          console.error(`Error generating AI prediction: ${error.message}`);
-          // Continue without prediction if there's an error
-        }
+        // try {
+        //   console.log(
+        //     `Generating AI prediction for symptoms: ${input.symptoms.join(
+        //       ", "
+        //     )}`
+        //   );
+        //   aiPrediction = await aiService.predictCondition(input.symptoms);
+        // } catch (error) {
+        //   console.error(`Error generating AI prediction: ${error.message}`);
+        //   // Continue without prediction if there's an error
+        // }
 
         // Create a new symptom record using the input provided
         const newRecord = new SymptomRecord({
           PatientID: input.PatientID,
           symptoms: input.symptoms,
           submissionDate: new Date(),
-          ...(aiPrediction && { aiPrediction }),
+          // ...(aiPrediction && { aiPrediction }),
         });
 
         // Save the new record to the database

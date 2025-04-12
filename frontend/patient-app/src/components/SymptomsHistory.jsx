@@ -8,7 +8,7 @@ const SymptomsHistory = ({ patientId }) => {
     variables: { patientId },
     skip: !patientId,
   });
-
+  console.log(data);
   if (loading) {
     return (
       <div className="flex justify-center items-center h-24">
@@ -102,11 +102,13 @@ const SymptomsHistory = ({ patientId }) => {
                   <div className="text-sm">
                     <p>
                       <span className="font-medium">Condition:</span>{" "}
-                      {record.aiPrediction.condition}
+                      {record.aiPrediction?.riskLevel == "low"
+                        ? "Normal"
+                        : record.aiPrediction?.condition}
                     </p>
                     {record.aiPrediction.probability && (
                       <p>
-                        <span className="font-medium">Probability:</span>{" "}
+                        <span className="font-medium">Confidence:</span>{" "}
                         {Math.round(record.aiPrediction.probability * 100)}%
                       </p>
                     )}
