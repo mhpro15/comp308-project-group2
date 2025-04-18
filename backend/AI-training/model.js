@@ -26,7 +26,6 @@ async function initTensorFlow() {
         console.log("Using GPU acceleration for TensorFlow");
       } catch (error) {
         console.log(`GPU import failed: ${error.message}`);
-        console.log("Falling back to CPU mode");
         tf = await import("@tensorflow/tfjs-node");
       }
     }
@@ -47,11 +46,7 @@ async function initTensorFlow() {
               (1024 * 1024 * 1024)
             ).toFixed(2)} GB`
           );
-        } catch (error) {
-          console.log(
-            "GPU info not available, but still using TensorFlow backend"
-          );
-        }
+        } catch (error) {}
       }
     } catch (error) {
       console.log(`Error checking backend: ${error.message}`);
@@ -63,7 +58,6 @@ async function initTensorFlow() {
     // Fallback to browser version as last resort
     tf = await import("@tensorflow/tfjs");
     tf.setBackend("cpu");
-    console.log("Using browser version of TensorFlow (slower)");
     return tf;
   }
 }

@@ -1,0 +1,16 @@
+{
+  "name": "comp308-project-group2",
+  "version": "1.0.0",
+  "description": "This project consists of a microservices-based backend with multiple frontend applications built using React and Vite.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start:backend": "concurrently  \"cd backend/health-service && npm run dev\"  \"cd backend/ai-service && npm run dev\" \"cd backend && npm run dev\"",
+    "start:frontend": "concurrently  \"cd frontend/shell-app && npm run dev\"  \"cd frontend/auth-app && npm run deploy\" \"cd frontend/patient-app && npm run deploy\" \"cd frontend/nurse-app && npm run deploy\""
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
