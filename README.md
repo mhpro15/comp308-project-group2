@@ -22,50 +22,88 @@ This project consists of a microservices-based backend with multiple frontend ap
     └── patient-app/     # Patient dashboard
 ```
 
-## Running the Backend
+## Installation
 
-1. Install dependencies:
+1. Install root dependencies:
+
+   ```
+   npm install
+   ```
+
+2. Install dependencies for each service:
 
    ```
    cd backend
    npm install
+
+   cd backend/health-service
+   npm install
+
+   cd backend/ai-service
+   npm install
+
+   cd frontend/shell-app
+   npm install
+
+   cd frontend/auth-app
+   npm install
+
+   cd frontend/nurse-app
+   npm install
+
+   cd frontend/patient-app
+   npm install
    ```
 
-2. Start the API Gateway:
+## Running the Application
+
+The project uses `concurrently` to run multiple services simultaneously. You can start the entire application with just two commands:
+
+1. Start all backend services:
 
    ```
+   npm run start:backend
+   ```
+
+2. Start all frontend applications:
+   ```
+   npm run start:frontend
+   ```
+
+Alternatively, you can run individual services as described below:
+
+### Running Individual Backend Services
+
+1. Start the API Gateway:
+
+   ```
+   cd backend
    npm run dev
    ```
 
-3. For each microservice, navigate to its directory and install dependencies:
+2. Start the Health Service:
 
    ```
    cd backend/health-service
-   npm install
    npm run dev
    ```
 
-   Repeat for other services (ai-service, etc.)
-
-## Running the Frontend
-
-1. Install dependencies for each frontend app:
-
+3. Start the AI Service:
    ```
-   cd frontend/shell-app
-   npm install
+   cd backend/ai-service
+   npm run dev
    ```
 
-   Repeat for other apps (auth-app, nurse-app, patient-app)
+### Running Individual Frontend Applications
 
-2. Start the shell app:
+1. Start the shell app:
 
    ```
    cd frontend/shell-app
    npm run dev
    ```
 
-3. Start other frontend apps (in separate terminals):
+2. Start other frontend apps:
 
    ```
    cd frontend/auth-app
